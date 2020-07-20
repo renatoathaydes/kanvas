@@ -14,13 +14,26 @@ import javafx.scene.paint.Color
 import javafx.scene.paint.Paint
 import javafx.stage.Stage
 
-class Kanvas(val width: Double, val height: Double) {
+abstract class KanvasApp : Application() {
 
+    abstract fun draw(): Kanvas
+
+    override fun start(primaryStage: Stage) {
+        val kanvas = draw()
+        val root = Group(kanvas.node)
+        primaryStage.scene = Scene(root)
+        primaryStage.centerOnScreen()
+        primaryStage.show()
+    }
+}
+
+class Kanvas(val width: Double, val height: Double) {
     private val canvas = Canvas(width, height)
     private val pane = BorderPane(canvas)
-    private val ctx = canvas.graphicsContext2D
 
+    private val ctx = canvas.graphicsContext2D
     var x: Double = 0.0
+
     var y: Double = 0.0
 
     val node: Node get() = pane
@@ -36,8 +49,9 @@ class Kanvas(val width: Double, val height: Double) {
         return this
     }
 
-    fun stroke(paint: Paint): Kanvas {
-        ctx.stroke = paint
+    fun stroke(paint: Paint? = null, width: Double? = null): Kanvas {
+        if (paint != null) ctx.stroke = paint
+        if (width != null) ctx.lineWidth = width
         return this
     }
 
@@ -57,26 +71,24 @@ class Kanvas(val width: Double, val height: Double) {
 
 }
 
-class TestApp : Application() {
+class KanvasDemo : KanvasApp() {
     override fun start(primaryStage: Stage) {
         primaryStage.title = "Kanvas Demo"
+        super.start(primaryStage)
+    }
 
-        val kanvas = Kanvas(300.0, 250.0).apply {
+    override fun draw(): Kanvas {
+        return Kanvas(300.0, 250.0).apply {
             background(Color.YELLOW)
             stroke(Color.BLUE)
             fill(Color.BLUE)
             at(50.0, 50.0).circle(radius = 30.0, fill = true)
+            stroke(paint = Color.GREEN, width = 3.0)
+            at(110.0, 50.0).circle(radius = 30.0, fill = false)
         }
-
-        val root = Group(kanvas.node)
-
-        primaryStage.scene = Scene(root)
-        primaryStage.centerOnScreen()
-        primaryStage.show()
     }
-
 }
 
 fun main() {
-    Application.launch(TestApp::class.java)
+    Application.launch(KanvasDemo::class.java)
 }
