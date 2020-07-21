@@ -1,0 +1,16 @@
+plugins {
+    id 'groovy'
+    id 'java'
+}
+
+group 'com.athaydes.kanvas'
+version '1.0-SNAPSHOT'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    implementation 'org.codehaus.groovy:groovy-all:3.0.4'
+    implementation project(':core')
+}
