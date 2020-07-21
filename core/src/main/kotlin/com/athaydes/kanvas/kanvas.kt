@@ -10,7 +10,6 @@ import javafx.scene.layout.Background
 import javafx.scene.layout.BackgroundFill
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.CornerRadii
-import javafx.scene.paint.Color
 import javafx.scene.paint.Paint
 import javafx.stage.Stage
 
@@ -38,17 +37,23 @@ class Kanvas(val width: Double, val height: Double) {
 
     val node: Node get() = pane
 
+    fun clear() {
+        ctx.clearRect(0.0, 0.0, canvas.width, canvas.height)
+    }
+
     fun at(x: Double, y: Double): Kanvas {
         this.x = x
         this.y = y
         return this
     }
 
+    @JvmOverloads
     fun background(paint: Paint, radii: CornerRadii? = null, insets: Insets? = null): Kanvas {
         pane.background = Background(BackgroundFill(paint, radii, insets))
         return this
     }
 
+    @JvmOverloads
     fun stroke(paint: Paint? = null, width: Double? = null): Kanvas {
         if (paint != null) ctx.stroke = paint
         if (width != null) ctx.lineWidth = width
@@ -60,6 +65,7 @@ class Kanvas(val width: Double, val height: Double) {
         return this
     }
 
+    @JvmOverloads
     fun circle(radius: Double = 10.0, fill: Boolean = false) {
         val diameter = radius * 2.0
         if (fill) {
@@ -69,26 +75,4 @@ class Kanvas(val width: Double, val height: Double) {
         }
     }
 
-}
-
-class KanvasDemo : KanvasApp() {
-    override fun start(primaryStage: Stage) {
-        primaryStage.title = "Kanvas Demo"
-        super.start(primaryStage)
-    }
-
-    override fun draw(): Kanvas {
-        return Kanvas(300.0, 250.0).apply {
-            background(Color.YELLOW)
-            stroke(Color.BLUE)
-            fill(Color.BLUE)
-            at(50.0, 50.0).circle(radius = 30.0, fill = true)
-            stroke(paint = Color.GREEN, width = 3.0)
-            at(110.0, 50.0).circle(radius = 30.0, fill = false)
-        }
-    }
-}
-
-fun main() {
-    Application.launch(KanvasDemo::class.java)
 }

@@ -1,2 +1,5 @@
 rootProject.name = 'kanvas'
 
+include 'core', 'demo:kotlin'
+include 'groovy-kanvas'
+
