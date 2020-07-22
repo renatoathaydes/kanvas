@@ -3,7 +3,6 @@ package com.athaydes.kanvas.gr
 import com.athaydes.kanvas.Kanvas
 import com.athaydes.kanvas.KanvasApp
 import groovy.transform.CompileStatic
-import javafx.application.Application
 import javafx.application.Platform
 import org.codehaus.groovy.control.CompilerConfiguration
 
@@ -26,20 +25,32 @@ abstract class KanvasScript extends DelegatingScript {
     void height(double h) {
         kanvas.canvas.height = h
     }
-
-    static void main(String[] args) {
-        Application.launch(KanvasDemo)
-    }
 }
 
 @CompileStatic
-class KanvasDemo extends KanvasApp {
+class GroovyKanvasApp extends KanvasApp {
     final Kanvas kanvas = new Kanvas(300, 250)
-    final File script = new File('groovy-kanvas/src/main/groovy/demo.groovy')
     final CompilerConfiguration config = new CompilerConfiguration(scriptBaseClass: KanvasScript.name)
     final GroovyShell shell = new GroovyShell(this.class.classLoader, config)
 
-    KanvasDemo() {
+    private File script
+
+    String getScriptLocation() {
+        def args = getParameters().raw
+        if (args.size() == 1) {
+            return args[0]
+        } else {
+            throw new RuntimeException("Expected a single argument, the Kanvas Script file, but got $args")
+        }
+    }
+
+    @Override
+    void init() {
+        script = new File(getScriptLocation())
+        if (!script.file) {
+            throw new FileNotFoundException(script.absolutePath)
+        }
+
         final redrawQueue = new LinkedBlockingDeque(1)
         def drawBounceThread = new Thread({
             while (true) {
@@ -81,4 +92,5 @@ class KanvasDemo extends KanvasApp {
         kanvasScript.run()
         return kanvas
     }
+
 }

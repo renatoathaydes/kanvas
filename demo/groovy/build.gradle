@@ -1,0 +1,23 @@
+plugins {
+    id 'groovy'
+}
+
+group 'com.athaydes.kanvas'
+version '1.0-SNAPSHOT'
+
+repositories {
+    jcenter()
+}
+
+sourceSets {
+    main.groovy.srcDirs = ['src']
+}
+
+dependencies {
+    implementation project(':core')
+    implementation project(':groovy-kanvas')
+    implementation 'org.codehaus.groovy:groovy-all:3.0.4'
+}
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
