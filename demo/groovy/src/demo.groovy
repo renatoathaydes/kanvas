@@ -4,6 +4,7 @@ import javafx.scene.paint.Color
 
 @BaseScript KanvasScript baseScript
 
+title 'Groovy Kanvas Demo'
 width 300
 height 200
 

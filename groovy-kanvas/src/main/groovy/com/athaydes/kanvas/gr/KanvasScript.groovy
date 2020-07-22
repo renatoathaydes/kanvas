@@ -4,6 +4,9 @@ import com.athaydes.kanvas.Kanvas
 import com.athaydes.kanvas.KanvasApp
 import groovy.transform.CompileStatic
 import javafx.application.Platform
+import javafx.beans.property.SimpleStringProperty
+import javafx.beans.property.StringProperty
+import javafx.stage.Stage
 import org.codehaus.groovy.control.CompilerConfiguration
 
 import java.nio.file.FileSystems
@@ -17,6 +20,12 @@ abstract class KanvasScript extends DelegatingScript {
 
     @Delegate
     Kanvas kanvas
+
+    StringProperty titleProperty
+
+    void title(String title) {
+        titleProperty?.set(title)
+    }
 
     void width(double w) {
         kanvas.canvas.width = w
@@ -33,6 +42,7 @@ class GroovyKanvasApp extends KanvasApp {
     final CompilerConfiguration config = new CompilerConfiguration(scriptBaseClass: KanvasScript.name)
     final GroovyShell shell = new GroovyShell(this.class.classLoader, config)
 
+    private final StringProperty titleProperty = new SimpleStringProperty()
     private File script
 
     String getScriptLocation() {
@@ -84,11 +94,18 @@ class GroovyKanvasApp extends KanvasApp {
         thread.start()
     }
 
+    @Override
+    void start(Stage primaryStage) {
+        primaryStage.titleProperty().bind(titleProperty)
+        super.start(primaryStage)
+    }
+
     Kanvas draw() {
         kanvas.clear()
         def kanvasScript = shell.parse(script) as KanvasScript
         kanvasScript.kanvas = kanvas
         kanvasScript.delegate = kanvas
+        kanvasScript.titleProperty = titleProperty
         kanvasScript.run()
         return kanvas
     }
