@@ -4,10 +4,13 @@ import javafx.scene.paint.Color
 
 @BaseScript KanvasScript baseScript
 
-background Color.web('blue')
+width 300
+height 200
 
-stroke Color.RED, 3
+background Color.web('99ddff')
+
+stroke Color.BLUE, 3
 at 50, 50 circle 20, false
 
-fill Color.WHITE
+fill Color.YELLOW
 at 100, 50 circle 30, true

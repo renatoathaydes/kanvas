@@ -20,13 +20,18 @@ abstract class KanvasApp : Application() {
     override fun start(primaryStage: Stage) {
         val kanvas = draw()
         val root = Group(kanvas.node)
+        primaryStage.isResizable = false
         primaryStage.scene = Scene(root)
+        root.layoutBoundsProperty().addListener { _ ->
+            primaryStage.width = root.layoutBounds.width
+            primaryStage.height = root.layoutBounds.height
+        }
         primaryStage.centerOnScreen()
         primaryStage.show()
     }
 }
 
-class Kanvas(val width: Double, val height: Double) {
+class Kanvas(width: Double, height: Double) {
     private val canvas = Canvas(width, height)
     private val pane = BorderPane(canvas)
 
