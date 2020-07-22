@@ -80,4 +80,13 @@ class Kanvas(width: Double, height: Double) {
         }
     }
 
+    @JvmOverloads
+    fun oval(width: Double = 10.0, height: Double = 10.0, fill: Boolean = false) {
+        if (fill) {
+            ctx.fillOval(x, y, width, height)
+        } else {
+            ctx.strokeOval(x, y, width, height)
+        }
+    }
+
 }
