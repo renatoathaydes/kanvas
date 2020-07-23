@@ -29,3 +29,13 @@ compileKotlin {
 compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
+
+jar {
+    archiveName 'kanvas-demo.jar'
+    manifest {
+        attributes "Main-Class": "KanvasDemo"
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
