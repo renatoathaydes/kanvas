@@ -12,7 +12,7 @@ repositories {
 
 dependencies {
     implementation 'org.codehaus.groovy:groovy:3.0.4'
-    implementation project(':core')
+    implementation project(':kanvas-core')
 }
 
 sourceCompatibility = JavaVersion.VERSION_11

@@ -8,7 +8,7 @@
  * If you use SDKMAN!, you can use a JavaFX-ready JVM like "14.0.0.fx-librca".
  */
 @Grab('org.jetbrains.kotlin:kotlin-stdlib-jdk8')
-@Grab('com.athaydes.kanvas:groovy-kanvas:1.0-SNAPSHOT')
+@Grab('com.athaydes.kanvas:kanvas-groovy:1.0-SNAPSHOT')
 import com.athaydes.kanvas.gr.GroovyKanvasApp
 import javafx.application.Application
 

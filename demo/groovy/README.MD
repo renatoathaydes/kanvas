@@ -1,6 +1,6 @@
 # Groovy Kanvas Demo
 
-This demo shows how to use the `groovy-kanvas` library in 2 different ways.
+This demo shows how to use the `kanvas-groovy` library in 2 different ways.
 
 * with a stand-alone Groovy script launcher.
 * in a standard Gradle application.
@@ -17,7 +17,7 @@ Here's the most basic launcher script:
 
 ```groovy
 @Grab('org.jetbrains.kotlin:kotlin-stdlib-jdk8')
-@Grab('com.athaydes.kanvas:groovy-kanvas:1.0-SNAPSHOT')
+@Grab('com.athaydes.kanvas:kanvas-groovy:1.0-SNAPSHOT')
 import com.athaydes.kanvas.gr.GroovyKanvasApp
 import javafx.application.Application
 
@@ -26,7 +26,7 @@ Application.launch(GroovyKanvasApp, "script.groovy")
 
 This will launch your Kanvas script at `script.groovy` in the working directory.
 
-> Notice that groovy-kanvas will automatically hot-reload your Kanvas script on every change you make!
+> Notice that kanvas-groovy will automatically hot-reload your Kanvas script on every change you make!
 
 ## Gradle Application
 
@@ -62,5 +62,5 @@ gradle jar
 Then, run the jar:
 
 ```
-java -jar build/libs/groovy-kanvas-demo.jar
+java -jar build/libs/kanvas-groovy-demo.jar
 ```
