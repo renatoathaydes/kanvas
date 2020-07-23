@@ -81,7 +81,7 @@ class GroovyKanvasApp extends KanvasApp {
 
         def thread = new Thread({
             def watchService = FileSystems.getDefault().newWatchService()
-            script.parentFile.toPath().register(watchService, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY)
+            script.absoluteFile.parentFile.toPath().register(watchService, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY)
             WatchKey key
             while ((key = watchService.take()) != null) {
                 key.pollEvents()
@@ -106,7 +106,11 @@ class GroovyKanvasApp extends KanvasApp {
         kanvasScript.kanvas = kanvas
         kanvasScript.delegate = kanvas
         kanvasScript.titleProperty = titleProperty
-        kanvasScript.run()
+        try {
+            kanvasScript.run()
+        } catch (e) {
+            System.err.println(e)
+        }
         return kanvas
     }
 

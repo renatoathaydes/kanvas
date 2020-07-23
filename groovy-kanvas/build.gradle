@@ -11,6 +11,9 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.codehaus.groovy:groovy-all:3.0.4'
+    implementation 'org.codehaus.groovy:groovy:3.0.4'
     implementation project(':core')
 }
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11

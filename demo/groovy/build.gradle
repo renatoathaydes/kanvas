@@ -16,8 +16,18 @@ sourceSets {
 dependencies {
     implementation project(':core')
     implementation project(':groovy-kanvas')
-    implementation 'org.codehaus.groovy:groovy-all:3.0.4'
+    implementation 'org.codehaus.groovy:groovy:3.0.4'
 }
 
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
+
+jar {
+    archiveName 'groovy-kanvas-demo.jar'
+    manifest {
+        attributes "Main-Class": "Launcher"
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}

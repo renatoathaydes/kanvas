@@ -52,3 +52,15 @@ class Launcher extends GroovyKanvasApp {
 ```
 
 This example also hot-reloads when `script.groovy` changes!
+
+To execute the launcher, you can create a jar first:
+
+```
+gradle jar
+```
+
+Then, run the jar:
+
+```
+java -jar build/libs/groovy-kanvas-demo.jar
+```
