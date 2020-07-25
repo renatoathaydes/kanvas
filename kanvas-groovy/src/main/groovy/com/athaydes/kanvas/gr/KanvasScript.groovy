@@ -70,8 +70,11 @@ class GroovyKanvasApp extends KanvasApp {
                     while (redrawQueue.poll(100, TimeUnit.MILLISECONDS)) {
                     }
                     Platform.runLater {
-                        println "Redrawing"
+                        System.err.print "Redrawing... "
+                        def time = System.currentTimeMillis()
                         draw()
+                        time = System.currentTimeMillis() - time
+                        System.err.println "(done in $time ms)"
                     }
                 }
             }
