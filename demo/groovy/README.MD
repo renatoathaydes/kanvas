@@ -37,7 +37,7 @@ The folder where this file is located is, in fact, a Gradle project.
 
 Check out the [build.gradle](build.gradle) and the launcher at [src/Launcher.groovy](src/Launcher.groovy).
 
-The launcher looks like this:
+A basic Kanvas launcher should look like this:
 
 ```groovy
 import com.athaydes.kanvas.gr.GroovyKanvasApp
@@ -63,4 +63,17 @@ Then, run the jar:
 
 ```
 java -jar build/libs/kanvas-groovy-demo.jar
+```
+
+To run a different Kanvas script, pass it as an argument to the program as shown in the _Showcase_ section below.
+
+## Showcase
+
+This project includes a showcase Groovy script at [src/showcase.groovy](src/showcase.groovy) which includes examples of
+using all available functions in `KanvasScript`.
+
+To launch it, you can use the jar created in the previous section:
+
+```
+java -jar build/libs/kanvas-groovy-demo.jar src/showcase.groovy
 ```
