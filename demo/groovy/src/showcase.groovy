@@ -48,3 +48,5 @@ at 30, 290 arc 100, 50, false, 270, 90
 at 140, 330 arc 100, 50, false, 0, 180, ArcType.CHORD
 at 250, 310 arc 100, 50, true, 90, 220, ArcType.ROUND
 
+font Font.font('Courier', 14), Color.WHITE
+at 10, 440 text 'https://github.com/renatoathaydes/kanvas'
