@@ -6,12 +6,9 @@ import javafx.scene.paint.Color
 
 title 'Groovy Kanvas Demo'
 width 300
-height 200
+height 250
 
-background Color.web('99ddff')
-
-stroke Color.BLUE, 3
-at 50, 50 circle 20
-
-fill Color.YELLOW
-at 100, 50 circle 30, true
+background Color.BLACK
+fill Color.BLUE
+stroke Color.GREEN, 3
+at 50, 30 circle 100, true

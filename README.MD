@@ -13,7 +13,7 @@ The basic functionality of Kanvas. It's written in Kotlin and provides the basic
 via the [com.athaydes.kanvas.Kanvas](kanvas-core/src/main/kotlin/com/athaydes/kanvas/kanvas.kt) class.
 
 This library also provides an abstract class, `com.athaydes.kanvas.KanvasApp`, to make it easy to create a
-`javafx.application.Application` implementation that displays a [Kanvas] and nothing else:
+`javafx.application.Application` implementation that displays a `Kanvas` and nothing else:
 
 ```kotlin
 import com.athaydes.kanvas.Kanvas
@@ -30,11 +30,15 @@ class KanvasDemo : KanvasApp() {
         return Kanvas(300.0, 250.0).apply {
             // draw your shapes here!
             background(Color.BLACK).fill(Color.BLUE).stroke(paint = Color.GREEN, width = 3.0)
-            at(50.0, 50.0).circle(radius = 100.0, fill = true)
+            at(50.0, 30.0).circle(radius = 100.0, fill = true)
         }
     }
 }
 ```
+
+Result:
+
+![Kotlin Basic Screenshot](demo/screenshots/basic.png)
 
 ## kanvas-groovy
 
@@ -53,12 +57,12 @@ import javafx.scene.paint.Color
 
 title 'Groovy Kanvas Demo'
 width 300
-height 200
+height 250
 
-background Color.web('99ddff')
-
-stroke Color.BLUE, 3
-at 50, 50 circle 20
+background Color.BLACK
+fill Color.BLUE
+stroke Color.GREEN, 3
+at 50, 30 circle 100, true
 ```
 
 #### Hot reloading Groovy scripts

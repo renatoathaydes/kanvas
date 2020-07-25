@@ -10,9 +10,9 @@ fun main() {
 class KanvasDemo : KanvasApp() {
     override fun draw(): Kanvas {
         return Kanvas(300.0, 250.0).apply {
+            // draw your shapes here!
             background(Color.BLACK).fill(Color.BLUE).stroke(paint = Color.GREEN, width = 3.0)
-            at(50.0, 50.0).circle(radius = 30.0, fill = true)
-            at(110.0, 50.0).circle(radius = 30.0, fill = false)
+            at(50.0, 30.0).circle(radius = 100.0, fill = true)
         }
     }
 }
