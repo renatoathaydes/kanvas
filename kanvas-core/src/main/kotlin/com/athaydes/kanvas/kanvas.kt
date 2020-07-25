@@ -145,8 +145,8 @@ class Kanvas(width: Double, height: Double) {
 
     @JvmOverloads
     fun polygon(points: List<Point2D>, fill: Boolean = false): Kanvas {
-        val xs = points.map { it.x }.toDoubleArray()
-        val ys = points.map { it.y }.toDoubleArray()
+        val xs = points.map { x + it.x }.toDoubleArray()
+        val ys = points.map { y + it.y }.toDoubleArray()
         if (fill) {
             ctx.fillPolygon(xs, ys, xs.size)
         } else {
