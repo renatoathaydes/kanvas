@@ -72,12 +72,12 @@ Groovy script and hot-reload it as it changes.
 
 All files under the same directory tree as the Groovy script are watched.
 
-For details on how to run Kanvas Groovy scripts, see the [Groovy Demo](demo/groovy/README.MD).
+For details on how to run Kanvas Groovy scripts, see the [Groovy Demo](demo/groovy/).
 
 ## Demos
 
-[Kotlin Demo](demo/kotlin/src/basic.kt)
+[Kotlin Demo](demo/kotlin/)
 
-[Groovy Demo](demo/groovy/src/demo.groovy)
+[Groovy Demo](demo/groovy/)
 
 [Showcase (Groovy)](demo/groovy/src/showcase.groovy)
