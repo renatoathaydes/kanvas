@@ -33,7 +33,7 @@ class KanvasDemo : KanvasApp() {
     override fun draw(): Kanvas {
         return Kanvas(300.0, 250.0).apply {
             // draw your shapes here!
-            background(Color.BLACK).fill(Color.BLUE).stroke(paint = Color.GREEN, width = 3.0)
+            background(Color.BLACK).fill(Color.BLUE)
             at(50.0, 30.0).circle(radius = 100.0, fill = true)
         }
     }
@@ -65,9 +65,10 @@ height 250
 
 background Color.BLACK
 fill Color.BLUE
-stroke Color.GREEN, 3
 at 50, 30 circle 100, true
 ```
+
+_This example is equivalent to the Kotlin example shown earlier._
 
 #### Hot reloading Groovy scripts
 
