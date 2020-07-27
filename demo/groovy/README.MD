@@ -77,3 +77,14 @@ To launch it, you can use the jar created in the previous section:
 ```
 java -jar build/libs/kanvas-groovy-demo.jar src/showcase.groovy
 ```
+
+You should see this:
+
+![Kanvas Showcase](../screenshots/showcase.png)
+
+## Diagram
+
+There is also a diagram produced by [src/kanvas-project-diagram.groovy](src/kanvas-project-diagram.groovy) which shows
+the organization of the Kanvas Project itself:
+
+![Kanvas Project Diagram](../screenshots/kanvas-project.png)

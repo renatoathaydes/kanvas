@@ -5,6 +5,10 @@ either a Kotlin or Groovy DSL.
 
 ## Libraries
 
+_Diagram produced by Kanvas itself!_
+
+![Kanvas Project Diagram](demo/screenshots/kanvas-project.png)
+
 ### kanvas-core
 
 > Maven coordinates: `com.athaydes.kanvas:kanvas-core:<version>`
@@ -81,3 +85,5 @@ For details on how to run Kanvas Groovy scripts, see the [Groovy Demo](demo/groo
 [Groovy Demo](demo/groovy/)
 
 [Showcase (Groovy)](demo/groovy/src/showcase.groovy)
+
+[Kanvas-To-Image](demo/kanvas-to-image/)
