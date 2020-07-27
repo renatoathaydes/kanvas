@@ -84,6 +84,12 @@ For details on how to run Kanvas Groovy scripts, see the [Groovy Demo](demo/groo
 
 [Groovy Demo](demo/groovy/)
 
-[Showcase (Groovy)](demo/groovy/src/showcase.groovy)
+[Kanvas-Reactive](demo/kanvas-reactive/) _(shown below)_
+
+![Kanvas Reactive Demo](demo/screenshots/kanvas-reactive.gif)
 
 [Kanvas-To-Image](demo/kanvas-to-image/)
+
+Showcase from [demo/groovy/src/showcase.groovy](demo/groovy/src/showcase.groovy):
+
+![Showcase](demo/screenshots/showcase.png)
