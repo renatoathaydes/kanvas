@@ -13,6 +13,7 @@ import javax.imageio.ImageIO
  *
  * The [formatName] parameter is passed to [ImageIO.write].
  */
+@JvmOverloads
 fun Kanvas.saveToImage(file: File, formatName: String = "png") {
     val writableImage = WritableImage(width.toInt(), height.toInt())
     node.snapshot(SnapshotParameters().apply { fill = Color.TRANSPARENT }, writableImage)
