@@ -1,5 +1,5 @@
 rootProject.name = 'kanvas'
 
 include 'kanvas-core', 'kanvas-groovy'
-include 'demo:kotlin', 'demo:groovy', 'demo:kanvas-reactive'
+include 'demo:kotlin', 'demo:groovy', 'demo:kanvas-reactive', 'demo:kanvas-to-image'
 
