@@ -45,18 +45,18 @@ class Example : Application() {
     override fun start(primaryStage: Stage) {
         val state = store.state
         val bkgPicker = ColorPicker(state.background)
-        bkgPicker.setOnAction { event ->
+        bkgPicker.setOnAction { _ ->
             store.dispatch(MyAction.ChangeBackground(bkgPicker.value))
         }
 
         val frgPicker = ColorPicker(state.foreground)
-        frgPicker.setOnAction { event ->
+        frgPicker.setOnAction { _ ->
             store.dispatch(MyAction.ChangeForeground(frgPicker.value))
         }
 
         val textField = TextArea(state.text)
         textField.prefRowCount = 3
-        textField.setOnKeyReleased { event ->
+        textField.setOnKeyReleased { _ ->
             store.dispatch(MyAction.ChangeText(textField.text))
         }
 
