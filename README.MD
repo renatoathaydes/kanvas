@@ -94,3 +94,15 @@ For details on how to run Kanvas Groovy scripts, see the [Groovy Demo](demo/groo
 Showcase from [demo/groovy/src/showcase.groovy](demo/groovy/src/showcase.groovy):
 
 ![Showcase](demo/screenshots/showcase.png)
+
+## Development
+
+To install the current version of the library in your local maven cache, use
+
+    ./gradlew install
+    
+since this library uses JavaFX, make sure that you use a jdk with JavaFX, eg.
+
+    sdk install java 11.0.8.fx-zulu
+    
+
