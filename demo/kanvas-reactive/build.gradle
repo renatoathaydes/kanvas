@@ -20,8 +20,8 @@ dependencies {
     implementation 'org.reduxkotlin:redux-kotlin:0.5.3'
 }
 
-sourceCompatibility = JavaVersion.VERSION_11
-targetCompatibility = JavaVersion.VERSION_11
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
 
 compileKotlin {
     kotlinOptions.jvmTarget = "1.8"
