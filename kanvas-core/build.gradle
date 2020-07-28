@@ -2,10 +2,12 @@ plugins {
     id 'java'
     id 'org.jetbrains.kotlin.jvm' version '1.3.72'
     id 'maven'
+    id "com.jfrog.bintray" version "1.8.5"
 }
 
 group 'com.athaydes.kanvas'
-version '1.0-SNAPSHOT'
+version '1.0'
+description 'A Kotlin DSL for JavaFX Canvas'
 
 repositories {
     jcenter()
@@ -16,8 +18,8 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
-sourceCompatibility = JavaVersion.VERSION_11
-targetCompatibility = JavaVersion.VERSION_11
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
 
 compileKotlin {
     kotlinOptions.jvmTarget = "1.8"
@@ -26,3 +28,103 @@ compileKotlin {
 compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    from sourceSets.main.allSource
+    classifier "sources"
+    extension "jar"
+}
+
+task javadocJar(type: Jar) {
+    classifier "javadoc"
+    from javadoc
+}
+
+jar {
+    manifest {
+        attributes 'Implementation-Version': version,
+                'Implementation-Name': 'Kanvas Core',
+                'Implementation-Vendor': 'Renato Athaydes',
+                'Automatic-Module-Name': 'kanvas.core'
+    }
+}
+
+/* Publishing config */
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+// add all the info required by Maven Central to the pom
+configure(install.repositories.mavenInstaller) {
+    pom.project {
+        inceptionYear '2020'
+        name project.name
+        packaging 'jar'
+        description project.description
+
+        url 'https://github.com/renatoathaydes/kanvas'
+
+        scm {
+            connection 'git@github.com:renatoathaydes/kanvas.git'
+            developerConnection 'git@github.com:renatoathaydes/kanvas.git'
+            url 'https://github.com/renatoathaydes/kanvas'
+        }
+
+        licenses {
+            license {
+                name 'The Apache License, Version 2.0'
+                url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+            }
+        }
+
+        developers {
+            developer {
+                id 'renatoathaydes'
+                name 'Renato Athaydes'
+                email 'renato@athaydes.com'
+            }
+        }
+    }
+}
+
+def getProjectProperty = { String propertyName ->
+    project.properties[propertyName]
+}
+
+bintray {
+    user = getProjectProperty("bintrayUserName")
+    key = getProjectProperty("bintrayApiKey")
+    configurations = ['archives']
+    publish = true
+    pkg {
+        repo = 'maven'
+        name = 'kanvas-core'
+        licenses = ['Apache-2.0']
+        desc = project.description
+        vcsUrl = 'https://github.com/renatoathaydes/kanvas.git'
+        websiteUrl = 'https://github.com/renatoathaydes/kanvas'
+        issueTrackerUrl = 'https://github.com/renatoathaydes/kanvas/issues'
+        labels = ['javafx', 'kotlin', 'canvas', 'draw']
+        publicDownloadNumbers = true
+
+        //noinspection GroovyAssignabilityCheck
+        version {
+            name = project.version
+            vcsTag = project.version
+            released = new Date()
+            gpg {
+                sign = true
+            }
+            mavenCentralSync {
+                sync = true
+                user = getProjectProperty("ossrhUsername")
+                password = getProjectProperty("ossrhPassword")
+                close = '1' // '0' to NOT close
+            }
+        }
+    }
+
+}
+
+bintrayUpload.dependsOn build, sourcesJar
