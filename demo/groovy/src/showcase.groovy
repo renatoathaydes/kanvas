@@ -1,6 +1,5 @@
 import com.athaydes.kanvas.gr.KanvasScript
 import groovy.transform.BaseScript
-import javafx.geometry.Point2D
 import javafx.scene.paint.Color
 import javafx.scene.shape.ArcType
 import javafx.scene.text.Font
