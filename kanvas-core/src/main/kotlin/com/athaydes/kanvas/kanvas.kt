@@ -1,5 +1,6 @@
 package com.athaydes.kanvas
 
+import javafx.application.Platform
 import javafx.beans.property.SimpleStringProperty
 import javafx.geometry.Insets
 import javafx.geometry.Point2D
@@ -14,6 +15,11 @@ import javafx.scene.paint.Paint
 import javafx.scene.shape.ArcType
 import javafx.scene.text.Font
 import javafx.stage.Stage
+import java.time.Duration
+import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.ScheduledFuture
+import java.util.concurrent.TimeUnit
 
 /**
  * A nice interface for JavaFX's [Canvas] which makes it very easy to draw shapes and text on the screen.
@@ -31,6 +37,17 @@ import javafx.stage.Stage
 class Kanvas(width: Double, height: Double) {
     private val canvas = Canvas(width, height)
     private val pane = BorderPane(canvas)
+
+    private var loopPeriod = Duration.ofMillis(16)
+    private var loopFuture: ScheduledFuture<*>? = null
+    private val executor: ScheduledExecutorService by lazy {
+        Executors.newSingleThreadScheduledExecutor {
+            Thread(it).apply {
+                name = "kanvas-looper"
+                isDaemon = true
+            }
+        }
+    }
 
     private val ctx = canvas.graphicsContext2D
 
@@ -53,6 +70,41 @@ class Kanvas(width: Double, height: Double) {
      */
     fun title(text: String) {
         titleProperty.set(text)
+    }
+
+    /**
+     * Set the loop period in milliseconds.
+     */
+    fun loopPeriod(millis: Long) {
+        if (millis <= 0) throw IllegalArgumentException("loop period must be a positive number")
+        loopPeriod(Duration.ofMillis(millis))
+    }
+
+    /**
+     * Set the period of the looper function (in other words, how often the looper function should run).
+     *
+     * This method must be called before the [loop] method is called to have any effect.
+     */
+    fun loopPeriod(duration: Duration) {
+        if (duration.isNegative) throw IllegalArgumentException("loop period must be a positive duration")
+        loopPeriod = duration
+    }
+
+    /**
+     * Set an updater function to run in a loop and update the Kanvas.
+     *
+     * A looper is normally used to create Kanvas animations.
+     */
+    fun loop(update: () -> Unit) {
+        loopFuture?.cancel(false)
+        val period = loopPeriod.toMillis()
+        loopFuture = executor.scheduleAtFixedRate({
+            try {
+                Platform.runLater(update)
+            } catch (e: Exception) {
+                System.err.println(e)
+            }
+        }, period, period, TimeUnit.MILLISECONDS)
     }
 
     /**

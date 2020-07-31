@@ -11,8 +11,8 @@ import org.codehaus.groovy.control.customizers.ImportCustomizer
 
 import java.nio.file.FileSystems
 import java.nio.file.WatchKey
-import java.time.Duration
-import java.util.concurrent.*
+import java.util.concurrent.LinkedBlockingDeque
+import java.util.concurrent.TimeUnit
 
 import static java.nio.file.StandardWatchEventKinds.*
 
@@ -22,9 +22,7 @@ abstract class KanvasScript extends Script {
     Kanvas kanvas
 
     @PackageScope
-    Looper looper
-
-    Duration loopPeriod
+    Closure<?> looper
 
     void width(double w) {
         kanvas.canvas.width = w
@@ -35,35 +33,17 @@ abstract class KanvasScript extends Script {
     }
 
     /**
-     * Set the period of the looper function.
+     * Set an updater function to run in a loop and update the Kanvas.
      *
-     * This method should be called before the looper function is called.
-     * @param period number of milliseconds, or a Duration instance
-     */
-    void loopPeriod(period) {
-        switch (period) {
-            case Number: loopPeriod = Duration.ofMillis((period as Number).longValue())
-                break
-            case Duration: loopPeriod = period
-                break
-            default:
-                throw new IllegalArgumentException("Invalid argument for loopPeriod. Must be a number or a java.time.Duration")
-        }
-    }
-
-    /**
-     * Set a function to run in a loop to update the Kanvas.
-     *
-     * This method should not be called more than once from a script.
+     * A looper is normally used to create Kanvas animations.
      *
      * @param looper to execute in a loop
      */
     void loop(Closure looper) {
-        if (this.looper != null) {
-            throw new IllegalStateException('Looper has already been set!')
-        }
-        this.looper = new Looper(loopPeriod, looper)
+        this.looper = looper
+        kanvas.loop { looper() }
     }
+
 }
 
 @CompileStatic
@@ -78,8 +58,6 @@ class GroovyKanvasApp extends KanvasApp {
     final GroovyShell shell = new GroovyShell(this.class.classLoader, config)
 
     private File script
-    private ScheduledFuture<?> looper
-    private ScheduledExecutorService executorService
 
     String getScriptLocation() {
         def args = getParameters().raw
@@ -136,47 +114,15 @@ class GroovyKanvasApp extends KanvasApp {
     Kanvas draw() {
         kanvas.clear()
         def kanvasScript = shell.parse(script) as KanvasScript
-        try {
-            def newLooper = executeAndGetLooper kanvasScript
-            replaceLooper newLooper
-        } catch (e) {
-            reportError e
-        }
+        executeAndGetLooper kanvasScript
         return kanvas
     }
 
     @PackageScope
-    Looper executeAndGetLooper(KanvasScript kanvasScript) {
+    Closure<?> executeAndGetLooper(KanvasScript kanvasScript) {
         kanvasScript.kanvas = kanvas
         kanvasScript.run()
         kanvasScript.looper
-    }
-
-    private void replaceLooper(Looper newLooper) {
-        looper?.cancel(false)
-        if (newLooper != null) {
-            def period = (newLooper.cycleDuration ?: Duration.ofMillis(16)).toMillis()
-            def ex = executorService ?: Executors.newSingleThreadScheduledExecutor {
-                def t = new Thread(it)
-                t.name = 'kanvas-looper'
-                t.daemon = true
-                t
-            }
-
-            looper = ex.scheduleAtFixedRate({
-                Platform.runLater {
-                    try {
-                        newLooper()
-                    } catch (e) {
-                        reportError e
-                    }
-                }
-            }, period, period, TimeUnit.MILLISECONDS)
-        }
-    }
-
-    private static void reportError(error) {
-        System.err.println(error)
     }
 
 }

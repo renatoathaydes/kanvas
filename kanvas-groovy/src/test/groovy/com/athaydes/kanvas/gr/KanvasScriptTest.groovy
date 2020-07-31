@@ -1,9 +1,6 @@
 package com.athaydes.kanvas.gr
 
-
 import org.junit.jupiter.api.Test
-
-import static org.junit.jupiter.api.Assertions.assertThrows
 
 class KanvasScriptTest {
 
@@ -20,14 +17,4 @@ class KanvasScriptTest {
         assert looper() == 42
     }
 
-    @Test
-    void 'cannot set function to update canvas in loop more than once'() {
-        def app = new GroovyKanvasApp()
-        def script = app.shell.parse('''
-        loop { 42 }
-        loop { 43 }
-        ''') as KanvasScript
-
-        assertThrows(IllegalStateException) { app.executeAndGetLooper(script) }
-    }
 }
