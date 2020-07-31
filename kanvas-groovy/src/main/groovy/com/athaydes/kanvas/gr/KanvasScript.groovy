@@ -6,9 +6,6 @@ import groovy.transform.BaseScript
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 import javafx.application.Platform
-import javafx.beans.property.SimpleStringProperty
-import javafx.beans.property.StringProperty
-import javafx.stage.Stage
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.customizers.ImportCustomizer
 
@@ -24,16 +21,10 @@ abstract class KanvasScript extends Script {
     @Delegate
     Kanvas kanvas
 
-    StringProperty titleProperty
-
     @PackageScope
     Looper looper
 
     Duration loopPeriod
-
-    void title(String title) {
-        titleProperty?.set(title)
-    }
 
     void width(double w) {
         kanvas.canvas.width = w
@@ -86,7 +77,6 @@ class GroovyKanvasApp extends KanvasApp {
     }
     final GroovyShell shell = new GroovyShell(this.class.classLoader, config)
 
-    private final StringProperty titleProperty = new SimpleStringProperty()
     private File script
     private ScheduledFuture<?> looper
     private ScheduledExecutorService executorService
@@ -143,12 +133,6 @@ class GroovyKanvasApp extends KanvasApp {
         thread.start()
     }
 
-    @Override
-    void start(Stage primaryStage) {
-        primaryStage.titleProperty().bind(titleProperty)
-        super.start(primaryStage)
-    }
-
     Kanvas draw() {
         kanvas.clear()
         def kanvasScript = shell.parse(script) as KanvasScript
@@ -164,7 +148,6 @@ class GroovyKanvasApp extends KanvasApp {
     @PackageScope
     Looper executeAndGetLooper(KanvasScript kanvasScript) {
         kanvasScript.kanvas = kanvas
-        kanvasScript.titleProperty = titleProperty
         kanvasScript.run()
         kanvasScript.looper
     }

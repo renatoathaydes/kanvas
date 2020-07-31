@@ -32,6 +32,8 @@ fun main() {
 class KanvasDemo : KanvasApp() {
     override fun draw(): Kanvas {
         return Kanvas(300.0, 250.0).apply {
+            title("Kotlin Kanvas Demo")
+
             // draw your shapes here!
             background(Color.BLACK).fill(Color.BLUE)
             at(50.0, 30.0).circle(radius = 100.0, fill = true)

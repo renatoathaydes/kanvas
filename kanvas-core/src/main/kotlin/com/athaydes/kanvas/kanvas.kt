@@ -1,11 +1,9 @@
 package com.athaydes.kanvas
 
-import javafx.application.Application
+import javafx.beans.property.SimpleStringProperty
 import javafx.geometry.Insets
 import javafx.geometry.Point2D
-import javafx.scene.Group
 import javafx.scene.Node
-import javafx.scene.Scene
 import javafx.scene.canvas.Canvas
 import javafx.scene.layout.Background
 import javafx.scene.layout.BackgroundFill
@@ -16,34 +14,6 @@ import javafx.scene.paint.Paint
 import javafx.scene.shape.ArcType
 import javafx.scene.text.Font
 import javafx.stage.Stage
-
-/**
- * Helpful base class for JavaFX Applications that display a [Canvas] object as the sole [Node] in a [Scene].
- *
- * The [draw] method must be implemented to provide the contents for the [Canvas].
- *
- * Resizing the [Kanvas] object causes the [Scene] to resize to accommodate it.
- */
-abstract class KanvasApp : Application() {
-
-    /**
-     * Draw the contents of the [Canvas].
-     */
-    abstract fun draw(): Kanvas
-
-    override fun start(primaryStage: Stage) {
-        val kanvas = draw()
-        val root = Group(kanvas.node)
-        primaryStage.isResizable = false
-        primaryStage.scene = Scene(root)
-        root.layoutBoundsProperty().addListener { _ ->
-            primaryStage.width = root.layoutBounds.width
-            primaryStage.height = root.layoutBounds.height
-        }
-        primaryStage.centerOnScreen()
-        primaryStage.show()
-    }
-}
 
 /**
  * A nice interface for JavaFX's [Canvas] which makes it very easy to draw shapes and text on the screen.
@@ -69,9 +39,21 @@ class Kanvas(width: Double, height: Double) {
 
     private var fontColor: Paint = Color.BLACK
 
+    val titleProperty = SimpleStringProperty()
+
     val node: Node get() = pane
     val width: Double get() = canvas.width
     val height: Double get() = canvas.height
+
+    /**
+     * Set the title of this kanvas.
+     *
+     * This has no effect unless [titleProperty] is bound to a JavaFX component, such at the [Stage]
+     * (which is done by [KanvasApp], for example).
+     */
+    fun title(text: String) {
+        titleProperty.set(text)
+    }
 
     /**
      * Clear the whole [Canvas].
