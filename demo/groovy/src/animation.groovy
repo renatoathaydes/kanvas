@@ -1,26 +1,45 @@
+import com.athaydes.kanvas.Kanvas
 import com.athaydes.kanvas.gr.KanvasScript
 import groovy.transform.BaseScript
+import groovy.transform.CompileStatic
 import javafx.scene.paint.Color
+
+import java.time.Duration
 
 @BaseScript KanvasScript baseScript
 
-title 'Groovy Kanvas Demo'
+title 'Groovy Animation Demo'
 width 300
 height 250
 
-def r = 0
-def g = 0
-def b = 0
+@CompileStatic
+class State {
+    double x = 30
+    double y = 30
+    double vx = 5
+    double vy = 3
+    Color color
 
-def colorComp = { v -> v % 255 }
+    void update(Kanvas k) {
+        x += vx
+        y += vy
+        if (x > k.width - 40 || x < 0) vx *= -1
+        if (y > k.height - 40 || y < 0) vy *= -1
+        k.fill color
+        k.at x, y circle 20, true
+    }
+}
 
-background Color.WHITESMOKE
+final state = [
+        new State(color: Color.BLUE),
+        new State(color: Color.GREEN, x: 100, y: 200),
+]
+
+background Color.INDIGO
+
+loopPeriod Duration.ofMillis(15)
 
 loop {
-    r = colorComp(r + 1)
-    g = colorComp(g + 4)
-    b = colorComp(b + 8)
-    fill Color.rgb(r, g, b)
-    stroke Color.GREEN, 3
-    at 50, 30 circle 100, true
+    clear()
+    state*.update(kanvas)
 }
