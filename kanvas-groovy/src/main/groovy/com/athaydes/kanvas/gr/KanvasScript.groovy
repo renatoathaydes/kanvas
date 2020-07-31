@@ -14,6 +14,7 @@ import org.codehaus.groovy.control.customizers.ImportCustomizer
 
 import java.nio.file.FileSystems
 import java.nio.file.WatchKey
+import java.time.Duration
 import java.util.concurrent.*
 
 import static java.nio.file.StandardWatchEventKinds.*
@@ -26,7 +27,9 @@ abstract class KanvasScript extends Script {
     StringProperty titleProperty
 
     @PackageScope
-    Closure looper
+    Looper looper
+
+    Duration loopPeriod
 
     void title(String title) {
         titleProperty?.set(title)
@@ -41,6 +44,23 @@ abstract class KanvasScript extends Script {
     }
 
     /**
+     * Set the period of the looper function.
+     *
+     * This method should be called before the looper function is called.
+     * @param period number of milliseconds, or a Duration instance
+     */
+    void loopPeriod(period) {
+        switch (period) {
+            case Number: loopPeriod = Duration.ofMillis((period as Number).longValue())
+                break
+            case Duration: loopPeriod = period
+                break
+            default:
+                throw new IllegalArgumentException("Invalid argument for loopPeriod. Must be a number or a java.time.Duration")
+        }
+    }
+
+    /**
      * Set a function to run in a loop to update the Kanvas.
      *
      * This method should not be called more than once from a script.
@@ -51,7 +71,7 @@ abstract class KanvasScript extends Script {
         if (this.looper != null) {
             throw new IllegalStateException('Looper has already been set!')
         }
-        this.looper = looper
+        this.looper = new Looper(loopPeriod, looper)
     }
 }
 
@@ -142,16 +162,17 @@ class GroovyKanvasApp extends KanvasApp {
     }
 
     @PackageScope
-    Closure<?> executeAndGetLooper(KanvasScript kanvasScript) {
+    Looper executeAndGetLooper(KanvasScript kanvasScript) {
         kanvasScript.kanvas = kanvas
         kanvasScript.titleProperty = titleProperty
         kanvasScript.run()
         kanvasScript.looper
     }
 
-    private void replaceLooper(Closure<?> newLooper) {
+    private void replaceLooper(Looper newLooper) {
         looper?.cancel(false)
         if (newLooper != null) {
+            def period = (newLooper.cycleDuration ?: Duration.ofMillis(16)).toMillis()
             def ex = executorService ?: Executors.newSingleThreadScheduledExecutor {
                 def t = new Thread(it)
                 t.name = 'kanvas-looper'
@@ -167,7 +188,7 @@ class GroovyKanvasApp extends KanvasApp {
                         reportError e
                     }
                 }
-            }, 100, 100, TimeUnit.MILLISECONDS)
+            }, period, period, TimeUnit.MILLISECONDS)
         }
     }
 
