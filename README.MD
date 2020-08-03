@@ -211,7 +211,7 @@ To install the current version of the library in your local maven cache, use
 
     ./gradlew install
     
-since this library uses JavaFX, make sure that you use a jdk with JavaFX, eg.
+Since this library uses JavaFX, make sure that you use a jdk with JavaFX! For example, using [SDKMAN!](https://sdkman.io/):
 
     sdk install java 11.0.8.fx-zulu
     
