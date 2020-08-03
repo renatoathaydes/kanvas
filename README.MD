@@ -46,6 +46,56 @@ Result:
 
 ![Kotlin Basic Screenshot](demo/screenshots/basic.png)
 
+### Animations
+
+If you want to create animations rather than static images, you can use the `loop` function as in the example below:
+
+> To change the frame rate, use the `loopPeriod` function, which accepts a number (milliseconds) or `java.time.Duration`.
+
+```kotlin
+import com.athaydes.kanvas.Kanvas
+import com.athaydes.kanvas.KanvasApp
+import javafx.scene.paint.Color
+
+class AnimationKanvasDemo : KanvasApp() {
+    data class State(
+        var x: Double = 0.0,
+        var y: Double = 0.0,
+        var vx: Double = 5.0,
+        var vy: Double = 3.0,
+        var color: Color = Color.BLACK
+    ) {
+        fun update(k: Kanvas) {
+            x += vx
+            y += vy
+            if (x > k.width - 40 || x < 0) vx *= -1
+            if (y > k.height - 40 || y < 0) vy *= -1
+            k.fill(color).at(x, y).circle(radius = 20.0, fill = true)
+        }
+    }
+
+    val state = listOf(
+        State(color = Color.BLUE),
+        State(color = Color.GREEN, x = 100.0, y = 200.0)
+    )
+
+    override fun draw(): Kanvas {
+        return Kanvas(300.0, 250.0).apply {
+            title("Kanvas Animation Demo")
+            background(Color.INDIGO)
+            loop {
+                clear()
+                state.forEach { s -> s.update(this) }
+            }
+        }
+    }
+}
+```
+
+Result:
+
+![Kotlin Animation](demo/screenshots/kanvas-animation.gif)
+
 ## kanvas-groovy
 
 > Maven coordinates: `com.athaydes.kanvas:kanvas-groovy:<version>`
@@ -70,7 +120,55 @@ fill Color.BLUE
 at 50, 30 circle 100, true
 ```
 
-_This example is equivalent to the Kotlin example shown earlier._
+Animation:
+
+```groovy
+import groovy.transform.BaseScript
+import groovy.transform.CompileStatic
+import javafx.scene.paint.Color
+
+import java.time.Duration
+
+@BaseScript KanvasScript baseScript
+
+title 'Groovy Animation Demo'
+width 300
+height 250
+
+@CompileStatic
+class State {
+    double x = 30
+    double y = 30
+    double vx = 5
+    double vy = 3
+    Color color
+
+    void update(Kanvas k) {
+        x += vx
+        y += vy
+        if (x > k.width - 40 || x < 0) vx *= -1
+        if (y > k.height - 40 || y < 0) vy *= -1
+        k.fill color
+        k.at x, y circle 20, true
+    }
+}
+
+final state = [
+        new State(color: Color.BLUE),
+        new State(color: Color.GREEN, x: 100, y: 200),
+]
+
+background Color.INDIGO
+
+loopPeriod Duration.ofMillis(15)
+
+loop {
+    clear()
+    state*.update(kanvas)
+}
+```
+
+_Both Groovy examples produce equivalent results as the Kotlin examples shown earlier._
 
 #### Hot reloading Groovy scripts
 
@@ -85,14 +183,24 @@ For details on how to run Kanvas Groovy scripts, see the [Groovy Demo](demo/groo
 
 [Kotlin Demo](demo/kotlin/)
 
+Contains a basic example as well as a simple animation.
+
 [Groovy Demo](demo/groovy/)
 
-[Kanvas-Reactive](demo/kanvas-reactive/) _(shown below)_
+Includes several Groovy scripts demonstrating Kanvas created with kanvas-groovy. The scripts can be launched via a
+stand-alone Groovy launcher or from a normal jar built from a Gradle project.
+
+Showcase from [showcase.groovy](demo/groovy/src/showcase.groovy):
+
+![Showcase](demo/screenshots/showcase.png)
+
+[Kanvas-Reactive](demo/kanvas-reactive/)
+
+A Kotlin example that shows how [ReduxKotlin](https://reduxkotlin.org/) can be used to create a reactive JavaFX 
+application that uses Kanvas.
 
 ![Kanvas Reactive Demo](demo/screenshots/kanvas-reactive.gif)
 
 [Kanvas-To-Image](demo/kanvas-to-image/)
 
-Showcase from [demo/groovy/src/showcase.groovy](demo/groovy/src/showcase.groovy):
-
-![Showcase](demo/screenshots/showcase.png)
+Another Kotlin example that shows how to save a Kanvas as an image file (e.g. PNG).
