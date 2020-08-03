@@ -73,15 +73,20 @@ class Kanvas(width: Double, height: Double) {
     }
 
     /**
-     * Set the loop period in milliseconds.
+     * Set the period of the looper function, in milliseconds (in other words, how often the looper function should run).
+     *
+     * The period must be a positive number, or zero to stop the loop.
+     *
+     * This method must be called before the [loop] method is called to have any effect.
      */
     fun loopPeriod(millis: Long) {
-        if (millis <= 0) throw IllegalArgumentException("loop period must be a positive number")
         loopPeriod(Duration.ofMillis(millis))
     }
 
     /**
      * Set the period of the looper function (in other words, how often the looper function should run).
+     *
+     * The duration must be positive, or zero to stop the loop.
      *
      * This method must be called before the [loop] method is called to have any effect.
      */
@@ -94,9 +99,12 @@ class Kanvas(width: Double, height: Double) {
      * Set an updater function to run in a loop and update the Kanvas.
      *
      * A looper is normally used to create Kanvas animations.
+     *
+     * Use the [loopPeriod] to change the frame rate, i.e. how often the given [update] function should run.
      */
     fun loop(update: () -> Unit) {
         loopFuture?.cancel(false)
+        if (loopPeriod == Duration.ZERO) return // stop the loop
         val period = loopPeriod.toMillis()
         loopFuture = executor.scheduleAtFixedRate({
             try {
