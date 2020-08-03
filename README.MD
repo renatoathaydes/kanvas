@@ -204,3 +204,15 @@ application that uses Kanvas.
 [Kanvas-To-Image](demo/kanvas-to-image/)
 
 Another Kotlin example that shows how to save a Kanvas as an image file (e.g. PNG).
+
+## Development
+
+To install the current version of the library in your local maven cache, use
+
+    ./gradlew install
+    
+since this library uses JavaFX, make sure that you use a jdk with JavaFX, eg.
+
+    sdk install java 11.0.8.fx-zulu
+    
+
