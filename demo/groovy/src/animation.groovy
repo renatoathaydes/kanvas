@@ -16,13 +16,13 @@ height 250
 class State {
     double x = 30
     double y = 30
-    double vx = 5
-    double vy = 3
+    double vx = 0.3
+    double vy = 0.2
     Color color
 
-    void update(Kanvas k) {
-        x += vx
-        y += vy
+    void update(Kanvas k, long dt) {
+        x += vx * dt
+        y += vy * dt
         if (x > k.width - 40 || x < 0) vx *= -1
         if (y > k.height - 40 || y < 0) vy *= -1
         k.fill color
@@ -32,14 +32,14 @@ class State {
 
 final state = [
         new State(color: Color.BLUE),
-        new State(color: Color.GREEN, x: 100, y: 200),
+        new State(color: Color.GREEN, x: 100, y: 140),
 ]
 
 background Color.INDIGO
 
 loopPeriod Duration.ofMillis(15)
 
-loop {
+loop { long dt ->
     clear()
-    state*.update(kanvas)
+    state*.update(kanvas, dt)
 }

@@ -39,9 +39,12 @@ abstract class KanvasScript extends Script {
      *
      * @param looper to execute in a loop
      */
-    void loop(Closure looper) {
+    @CompileStatic
+    void loop(Closure<?> looper) {
         this.looper = looper
-        kanvas.loop { looper() }
+        kanvas.loop { long dt ->
+            looper dt
+        }
     }
 
 }

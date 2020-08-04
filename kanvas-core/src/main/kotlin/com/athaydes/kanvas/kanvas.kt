@@ -2,10 +2,12 @@ package com.athaydes.kanvas
 
 import javafx.application.Platform
 import javafx.beans.property.SimpleStringProperty
+import javafx.geometry.BoundingBox
 import javafx.geometry.Insets
 import javafx.geometry.Point2D
 import javafx.scene.Node
 import javafx.scene.canvas.Canvas
+import javafx.scene.image.Image
 import javafx.scene.layout.Background
 import javafx.scene.layout.BackgroundFill
 import javafx.scene.layout.BorderPane
@@ -20,6 +22,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicLong
 
 /**
  * A nice interface for JavaFX's [Canvas] which makes it very easy to draw shapes and text on the screen.
@@ -98,19 +101,26 @@ class Kanvas(width: Double, height: Double) {
     /**
      * Set an updater function to run in a loop and update the Kanvas.
      *
-     * A looper is normally used to create Kanvas animations.
+     * A looper is normally used to create Kanvas animations. The [dt] argument passed to the [update]
+     * function is the delta time, in milliseconds, between invocations. It can be used to easily produce
+     * animations that run at the same speed regardless of the frame rate.
      *
      * Use the [loopPeriod] to change the frame rate, i.e. how often the given [update] function should run.
      */
-    fun loop(update: () -> Unit) {
+    fun loop(update: (dt: Long) -> Unit) {
         loopFuture?.cancel(false)
         if (loopPeriod == Duration.ZERO) return // stop the loop
         val period = loopPeriod.toMillis()
+        val dt = AtomicLong(System.currentTimeMillis())
         loopFuture = executor.scheduleAtFixedRate({
-            try {
-                Platform.runLater(update)
-            } catch (e: Exception) {
-                System.err.println(e)
+            Platform.runLater {
+                val t = System.currentTimeMillis()
+                val dtVal = t - dt.getAndSet(t)
+                try {
+                    update(dtVal)
+                } catch (e: Exception) {
+                    System.err.println(e)
+                }
             }
         }, period, period, TimeUnit.MILLISECONDS)
     }
@@ -309,8 +319,30 @@ class Kanvas(width: Double, height: Double) {
     }
 
     /**
+     * Draw an [Image].
+     *
+     * The [width] and [height] are the size of the image to be drawn, while the [bounds] are relative to the
+     * image itself.
+     */
+    @JvmOverloads
+    fun image(image: Image, width: Double = 10.0, height: Double = 10.0, bounds: BoundingBox? = null): Kanvas {
+        val b = bounds ?: bounds(0.0, 0.0, width, height)
+        ctx.drawImage(image, b.minX, b.minY, b.width, b.height, x, y, width, height)
+        return this
+    }
+
+    /**
      * Create a [Point2D].
      */
     fun point(x: Double, y: Double) = Point2D(x, y)
+
+    /**
+     * Create a [BoundingBox].
+     *
+     * See [image].
+     */
+    @JvmOverloads
+    fun bounds(x: Double = 0.0, y: Double = 0.0, width: Double = 10.0, height: Double = 10.0): BoundingBox =
+        BoundingBox(x, y, width, height)
 
 }
