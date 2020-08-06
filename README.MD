@@ -195,7 +195,10 @@ Contains a basic example as well as a simple animation.
 Includes several Groovy scripts demonstrating Kanvas created with kanvas-groovy. The scripts can be launched via a
 stand-alone Groovy launcher or from a normal jar built from a Gradle project.
 
-Showcase from [showcase.groovy](demo/groovy/src/showcase.groovy):
+* [kanvas-project-diagram.groovy](demo/groovy/src/kanvas-project-diagram.groovy) (the diagram shown at the top of this page)
+* [animation.groovy](demo/groovy/src/animation.groovy) (simple animation)
+* [sprites.groovy](demo/groovy/src/sprites.groovy) (shows keyboard event handling, usage of sprites and transformations)
+* [showcase.groovy](demo/groovy/src/showcase.groovy) (shown below)
 
 ![Showcase](demo/screenshots/showcase.png)
 

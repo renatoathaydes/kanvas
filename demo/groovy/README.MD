@@ -88,3 +88,10 @@ There is also a diagram produced by [src/kanvas-project-diagram.groovy](src/kanv
 the organization of the Kanvas Project itself:
 
 ![Kanvas Project Diagram](../screenshots/kanvas-project.png)
+
+## Sprites
+
+The [src/sprites.groovy](src/sprites.groovy) demo shows the very basic of game engine features, such as handling 
+keyboard input as well as sprites (snippets of images which can be used to animate characters).
+
+![Kanvas Sprites](../screenshots/character-sprite.png)
