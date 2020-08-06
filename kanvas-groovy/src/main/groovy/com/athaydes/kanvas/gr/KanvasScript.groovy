@@ -2,6 +2,7 @@ package com.athaydes.kanvas.gr
 
 import com.athaydes.kanvas.Kanvas
 import com.athaydes.kanvas.KanvasApp
+import com.athaydes.kanvas.Keyboard
 import groovy.transform.BaseScript
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
@@ -23,6 +24,8 @@ abstract class KanvasScript extends Script {
 
     @PackageScope
     Closure<?> looper
+
+    Keyboard getKeyboard() { kanvas.keyboard }
 
     void width(double w) {
         kanvas.canvas.width = w

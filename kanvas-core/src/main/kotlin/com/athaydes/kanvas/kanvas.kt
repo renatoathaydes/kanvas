@@ -66,6 +66,11 @@ class Kanvas(width: Double, height: Double) {
     val height: Double get() = canvas.height
 
     /**
+     * Get the [Keyboard] object in order to react to keyboard events.
+     */
+    val keyboard: Keyboard by lazy { Keyboard(node) }
+
+    /**
      * Set the title of this kanvas.
      *
      * This has no effect unless [titleProperty] is bound to a JavaFX component, such at the [Stage]
