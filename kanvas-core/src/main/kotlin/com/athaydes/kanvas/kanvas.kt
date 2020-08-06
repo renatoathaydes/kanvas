@@ -7,6 +7,7 @@ import javafx.geometry.Insets
 import javafx.geometry.Point2D
 import javafx.scene.Node
 import javafx.scene.canvas.Canvas
+import javafx.scene.canvas.GraphicsContext
 import javafx.scene.image.Image
 import javafx.scene.layout.Background
 import javafx.scene.layout.BackgroundFill
@@ -40,6 +41,7 @@ import java.util.concurrent.atomic.AtomicLong
 class Kanvas(width: Double, height: Double) {
     private val canvas = Canvas(width, height)
     private val pane = BorderPane(canvas)
+    private val kanvasCtx = KanvasContextImpl(canvas.graphicsContext2D)
 
     private var loopPeriod = Duration.ofMillis(16)
     private var loopFuture: ScheduledFuture<*>? = null
@@ -53,6 +55,26 @@ class Kanvas(width: Double, height: Double) {
     }
 
     private val ctx = canvas.graphicsContext2D
+
+    /**
+     * Access the [GraphicsContext] object associated with the underlying
+     * [Canvas].
+     *
+     * This context can be used to perform advanced transformations on the objects being
+     * drawn on a canvas.
+     *
+     * All modifications made to the context will be local to the given callback,
+     * which means they won't affect anything outside of that.
+     */
+    fun withContext(useContext: (KanvasContext) -> Unit) {
+        val ctx = canvas.graphicsContext2D
+        ctx.save()
+        try {
+            useContext(kanvasCtx)
+        } finally {
+            ctx.restore()
+        }
+    }
 
     var x: Double = 0.0
     var y: Double = 0.0
