@@ -6,7 +6,7 @@ plugins {
 }
 
 group 'com.athaydes.kanvas'
-version '1.0.1'
+version project.property('kanvas.core.version')
 description 'A Kotlin DSL for JavaFX Canvas'
 
 dependencies {
