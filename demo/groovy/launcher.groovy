@@ -12,5 +12,6 @@
 import com.athaydes.kanvas.gr.GroovyKanvasApp
 import javafx.application.Application
 
+def script = args ? args[0] : 'showcase'
 def dir = new File(getClass().location.file).parentFile
-Application.launch(GroovyKanvasApp, "$dir/src/demo.groovy")
+Application.launch(GroovyKanvasApp, "$dir/src/${script}.groovy")
