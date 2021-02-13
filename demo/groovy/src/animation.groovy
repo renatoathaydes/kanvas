@@ -18,15 +18,22 @@ class State {
     double y = 30
     double vx = 0.3
     double vy = 0.2
+    final double radius = 20
     Color color
 
     void update(Kanvas k, long dt) {
         x += vx * dt
         y += vy * dt
-        if (x > k.width - 40 || x < 0) vx *= -1
-        if (y > k.height - 40 || y < 0) vy *= -1
+        if (x > k.width - 2 * radius || x < 0) {
+            vx *= -1
+            x = x < 0 ? 0 : k.width - 2 * radius
+        }
+        if (y > k.height - 2 * radius || y < 0) {
+            vy *= -1
+            y = y < 0 ? 0 : k.height - 2 * radius
+        }
         k.fill color
-        k.at x, y circle 20, true
+        k.at x, y circle radius, true
     }
 }
 
