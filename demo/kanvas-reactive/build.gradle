@@ -6,10 +6,6 @@ plugins {
 group 'com.athaydes.kanvas'
 version '1.0-SNAPSHOT'
 
-repositories {
-    jcenter()
-}
-
 sourceSets {
     main.kotlin.srcDirs = ['src']
 }
