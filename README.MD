@@ -1,11 +1,11 @@
-# Kanvas
+![Kanvas Logo](demo/screenshots/kanvas-logo.png)
 
-This project contains a few libraries to make it easy to draw on a JavaFX Canvas using
+Kanvas is a library that makes it easy to draw on a JavaFX Canvas using
 either a Kotlin or Groovy DSL.
 
-## Libraries
+## Modules
 
-_Diagram produced by Kanvas itself!_
+_This diagram, as well as the logo above, were produced by Kanvas itself!_
 
 ![Kanvas Project Diagram](demo/screenshots/kanvas-project.png)
 
