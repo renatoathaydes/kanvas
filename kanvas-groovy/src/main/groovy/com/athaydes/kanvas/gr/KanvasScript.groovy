@@ -3,6 +3,8 @@ package com.athaydes.kanvas.gr
 import com.athaydes.kanvas.Kanvas
 import com.athaydes.kanvas.KanvasApp
 import com.athaydes.kanvas.Keyboard
+import com.athaydes.kanvas.SaveKt
+import com.sun.nio.file.SensitivityWatchEventModifier
 import groovy.transform.BaseScript
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
@@ -11,11 +13,14 @@ import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.customizers.ImportCustomizer
 
 import java.nio.file.FileSystems
+import java.nio.file.WatchEvent
 import java.nio.file.WatchKey
 import java.util.concurrent.LinkedBlockingDeque
 import java.util.concurrent.TimeUnit
 
-import static java.nio.file.StandardWatchEventKinds.*
+import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE
+import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE
+import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY
 
 abstract class KanvasScript extends Script {
 
@@ -33,6 +38,23 @@ abstract class KanvasScript extends Script {
 
     void height(double h) {
         kanvas.canvas.height = h
+    }
+
+    /**
+     * Save the Kanvas to an image file.
+     * @param file to store image
+     * @param formatName informal name of the format (see {@link javax.imageio.ImageIO}).
+     */
+    void saveToImage(File file, String formatName) {
+        SaveKt.saveToImage(kanvas, file, formatName)
+    }
+
+    /**
+     * Save the Kanvas to a PNG image file.
+     * @param file to store image
+     */
+    void saveToImage(File file) {
+        SaveKt.saveToImage(kanvas, file)
     }
 
     /**
@@ -104,7 +126,10 @@ class GroovyKanvasApp extends KanvasApp {
 
         def thread = new Thread({
             def watchService = FileSystems.getDefault().newWatchService()
-            script.absoluteFile.parentFile.toPath().register(watchService, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY)
+            script.absoluteFile.parentFile.toPath()
+                    .register(watchService,
+                            [ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY] as WatchEvent.Kind[],
+                            SensitivityWatchEventModifier.HIGH)
             WatchKey key
             while ((key = watchService.take()) != null) {
                 key.pollEvents()
