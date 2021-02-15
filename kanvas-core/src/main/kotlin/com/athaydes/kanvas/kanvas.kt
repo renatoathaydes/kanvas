@@ -16,6 +16,7 @@ import javafx.scene.layout.CornerRadii
 import javafx.scene.paint.Color
 import javafx.scene.paint.Paint
 import javafx.scene.shape.ArcType
+import javafx.scene.shape.StrokeLineCap
 import javafx.scene.text.Font
 import javafx.stage.Stage
 import java.time.Duration
@@ -211,9 +212,10 @@ class Kanvas(width: Double, height: Double) {
      * @see fill
      */
     @JvmOverloads
-    fun stroke(paint: Paint? = null, width: Double? = null): Kanvas {
+    fun stroke(paint: Paint? = null, width: Double? = null, lineCap: StrokeLineCap? = null): Kanvas {
         if (paint != null) ctx.stroke = paint
         if (width != null) ctx.lineWidth = width
+        if (lineCap != null) ctx.lineCap = lineCap
         return this
     }
 
@@ -302,6 +304,23 @@ class Kanvas(width: Double, height: Double) {
             ctx.fillArc(x, y, width, height, startAngle, arcExtent, closure)
         } else {
             ctx.strokeArc(x, y, width, height, startAngle, arcExtent, closure)
+        }
+        return this
+    }
+
+    /**
+     * Draw a triangle at the current location (set by [at]).
+     *
+     * All points are relative to the [at] position.
+     */
+    @JvmOverloads
+    fun triangle(p: Point2D, q: Point2D, r: Point2D, fill: Boolean = false): Kanvas {
+        val xs = doubleArrayOf(x + p.x, x + q.x, x + r.x)
+        val ys = doubleArrayOf(y + p.y, y + q.y, y + r.y)
+        if (fill) {
+            ctx.fillPolygon(xs, ys, 3)
+        } else {
+            ctx.strokePolygon(xs, ys, 3)
         }
         return this
     }
