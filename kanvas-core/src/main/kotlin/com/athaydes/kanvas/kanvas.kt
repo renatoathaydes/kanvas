@@ -94,6 +94,11 @@ class Kanvas(width: Double, height: Double) {
     val keyboard: Keyboard by lazy { Keyboard(node) }
 
     /**
+     * Get the [Mouse] object in order to react to mouse events.
+     */
+    val mouse: Mouse by lazy { Mouse(node) }
+
+    /**
      * Set the title of this kanvas.
      *
      * This has no effect unless [titleProperty] is bound to a JavaFX component, such at the [Stage]
