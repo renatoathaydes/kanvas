@@ -166,6 +166,13 @@ class Kanvas(width: Double, height: Double) {
     }
 
     /**
+     * Clears the given box within the [Cnavas].
+     */
+    fun clear(box: BoundingBox) {
+        ctx.clearRect(box.minX, box.minY, box.width, box.height)
+    }
+
+    /**
      * Set the coordinates where drawing should occur.
      *
      * Coordinates start from the top-left corner, so for example, (0, 0) is the top-left corner,
