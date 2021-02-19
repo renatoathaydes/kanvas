@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicLong
 
 /**
  * Key used to de-register a handler.
- * @see Mouse.forgetClickHandler
+ * @see Mouse.forgetHandler
  * @see Mouse.onClick
  */
 data class HandlerKey(val key: String)
@@ -23,8 +23,9 @@ class Mouse internal constructor(pane: Node) {
     private val x: AtomicLong = AtomicLong(0)
     private val y: AtomicLong = AtomicLong(0)
 
-    private val clickHandlerCounter = AtomicInteger()
+    private val handlerCounter = AtomicInteger()
     private val clickHandlers = mutableMapOf<HandlerKey, (MouseEvent) -> Unit>()
+    private val moveHandlers = mutableMapOf<HandlerKey, (MouseEvent) -> Unit>()
 
     init {
         if (pane.scene == null) {
@@ -40,6 +41,7 @@ class Mouse internal constructor(pane: Node) {
         scene.onMouseMoved = EventHandler { evt ->
             x.set(evt.sceneX.toLong())
             y.set(evt.sceneY.toLong())
+            moveHandlers.values.forEach { it(evt) }
         }
         scene.onMouseClicked = EventHandler { evt ->
             clickHandlers.values.forEach { it(evt) }
@@ -50,19 +52,31 @@ class Mouse internal constructor(pane: Node) {
      * Register a handler for mouse click events.
      *
      * The returned [HandlerKey] can be used to de-register the handler by calling
-     * [forgetClickHandler].
+     * [forgetHandler].
      */
     fun onClick(handler: (MouseEvent) -> Unit): HandlerKey {
-        val key = HandlerKey(clickHandlerCounter.incrementAndGet().toString())
+        val key = HandlerKey(handlerCounter.incrementAndGet().toString())
         clickHandlers[key] = handler
         return key
     }
 
     /**
-     * Forget a click handler previously registered with [onClick].
+     * Register a handler for mouse move events.
+     *
+     * The returned [HandlerKey] can be used to de-register the handler by calling
+     * [forgetHandler].
      */
-    fun forgetClickHandler(key: HandlerKey): Boolean {
-        return clickHandlers.remove(key) != null
+    fun onMove(handler: (MouseEvent) -> Unit): HandlerKey {
+        val key = HandlerKey(handlerCounter.incrementAndGet().toString())
+        moveHandlers[key] = handler
+        return key
+    }
+
+    /**
+     * Forget an event handler previously registered with [onClick] or [onMove].
+     */
+    fun forgetHandler(key: HandlerKey): Boolean {
+        return clickHandlers.remove(key) != null || moveHandlers.remove(key) != null
     }
 
     /**
