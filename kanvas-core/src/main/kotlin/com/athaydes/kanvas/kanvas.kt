@@ -93,8 +93,8 @@ abstract class KanvasApp : Application() {
  * ```
  */
 class Kanvas(width: Double, height: Double) {
-    private val canvas = Canvas(width, height)
-    private val pane = BorderPane(canvas)
+    val canvas = Canvas(width, height)
+    val pane = BorderPane(canvas)
 
     private val ctx = canvas.graphicsContext2D
 
