@@ -1,12 +1,15 @@
 package com.athaydes.kanvas
 
 import javafx.application.Application
+import javafx.beans.InvalidationListener
 import javafx.geometry.Insets
 import javafx.geometry.Point2D
 import javafx.scene.Group
 import javafx.scene.Node
+import javafx.scene.Parent
 import javafx.scene.Scene
 import javafx.scene.canvas.Canvas
+import javafx.scene.control.ScrollPane
 import javafx.scene.layout.Background
 import javafx.scene.layout.BackgroundFill
 import javafx.scene.layout.BorderPane
@@ -15,7 +18,9 @@ import javafx.scene.paint.Color
 import javafx.scene.paint.Paint
 import javafx.scene.shape.ArcType
 import javafx.scene.text.Font
+import javafx.stage.Screen
 import javafx.stage.Stage
+import kotlin.math.max
 
 /**
  * Helpful base class for JavaFX Applications that display a [Canvas] object as the sole [Node] in a [Scene].
@@ -31,17 +36,46 @@ abstract class KanvasApp : Application() {
      */
     abstract fun draw(): Kanvas
 
+    open fun configure(kanvas: Kanvas, primaryStage: Stage) {
+    }
+
     override fun start(primaryStage: Stage) {
         val kanvas = draw()
-        val root = Group(kanvas.node)
-        primaryStage.isResizable = false
-        primaryStage.scene = Scene(root)
-        root.layoutBoundsProperty().addListener { _ ->
-            primaryStage.width = root.layoutBounds.width
-            primaryStage.height = root.layoutBounds.height
+        configure(kanvas, primaryStage)
+        val root = if (primaryStage.isResizable) {
+            val (maxWidth, maxHeight) = getMaxScreenSize()
+            primaryStage.maxWidth = maxWidth
+            primaryStage.maxHeight = maxHeight
+            createScrollPane(kanvas)
+        } else {
+            Group(kanvas.node)
         }
+
+        primaryStage.scene = Scene(root)
+        primaryStage.widthProperty().addListener(InvalidationListener {
+            root.maxWidth(primaryStage.width)
+        })
+        primaryStage.heightProperty().addListener(InvalidationListener {
+            root.maxHeight(primaryStage.height)
+        })
         primaryStage.centerOnScreen()
         primaryStage.show()
+    }
+
+    private fun createScrollPane(kanvas: Kanvas): Parent {
+        val pane = ScrollPane(kanvas.node)
+        pane.style = "-fx-focus-color: transparent;";
+        return pane
+    }
+
+    private fun getMaxScreenSize(): Pair<Double, Double> {
+        var width = Screen.getPrimary().bounds.width
+        var height = Screen.getPrimary().bounds.height
+        Screen.getScreens().forEach { s ->
+            width = max(width, s.bounds.width)
+            height = max(height, s.bounds.height)
+        }
+        return width to height
     }
 }
 

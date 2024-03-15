@@ -4,6 +4,8 @@ import com.athaydes.kanvas.Kanvas
 import com.athaydes.kanvas.KanvasApp
 import groovy.transform.CompileStatic
 import javafx.application.Platform
+import javafx.beans.property.BooleanProperty
+import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.property.StringProperty
 import javafx.stage.Stage
@@ -14,7 +16,9 @@ import java.nio.file.WatchKey
 import java.util.concurrent.LinkedBlockingDeque
 import java.util.concurrent.TimeUnit
 
-import static java.nio.file.StandardWatchEventKinds.*
+import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE
+import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE
+import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY
 
 abstract class KanvasScript extends DelegatingScript {
 
@@ -22,9 +26,14 @@ abstract class KanvasScript extends DelegatingScript {
     Kanvas kanvas
 
     StringProperty titleProperty
+    BooleanProperty resizableProperty
 
     void title(String title) {
         titleProperty?.set(title)
+    }
+
+    void resizable(boolean isResizable) {
+        resizableProperty?.set(isResizable)
     }
 
     void width(double w) {
@@ -43,6 +52,7 @@ class GroovyKanvasApp extends KanvasApp {
     final GroovyShell shell = new GroovyShell(this.class.classLoader, config)
 
     private final StringProperty titleProperty = new SimpleStringProperty()
+    private final BooleanProperty resizableProperty = new SimpleBooleanProperty()
     private File script
 
     String getScriptLocation() {
@@ -103,12 +113,19 @@ class GroovyKanvasApp extends KanvasApp {
         super.start(primaryStage)
     }
 
+    @Override
+    void configure(Kanvas kanvas, Stage primaryStage) {
+        // this property cannot be bound, so unfortunately it can't be changed
+        primaryStage.resizable = resizableProperty.get()
+    }
+
     Kanvas draw() {
         kanvas.clear()
         def kanvasScript = shell.parse(script) as KanvasScript
         kanvasScript.kanvas = kanvas
         kanvasScript.delegate = kanvas
         kanvasScript.titleProperty = titleProperty
+        kanvasScript.resizableProperty = resizableProperty
         try {
             kanvasScript.run()
         } catch (e) {
