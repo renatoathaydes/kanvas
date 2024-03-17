@@ -2,7 +2,8 @@ package com.athaydes.kanvas.gr
 
 import com.athaydes.kanvas.Kanvas
 import com.athaydes.kanvas.KanvasApp
-import com.sun.nio.file.SensitivityWatchEventModifier
+import com.athaydes.kanvas.Scheduler
+import com.athaydes.kanvas.TaskId
 import groovy.transform.BaseScript
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
@@ -11,11 +12,12 @@ import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.customizers.ImportCustomizer
 
 import java.nio.file.FileSystems
-import java.nio.file.StandardWatchEventKinds
-import java.nio.file.WatchEvent
 import java.nio.file.WatchKey
-import java.util.concurrent.LinkedBlockingDeque
-import java.util.concurrent.TimeUnit
+import java.time.Duration
+
+import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE
+import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE
+import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY
 
 @CompileStatic
 class GroovyKanvasApp extends KanvasApp {
@@ -46,37 +48,23 @@ class GroovyKanvasApp extends KanvasApp {
             throw new FileNotFoundException(script.absolutePath)
         }
 
-        final redrawQueue = new LinkedBlockingDeque(1)
-        def drawBounceThread = new Thread({
-            while (true) {
-                def next = redrawQueue.poll(2, TimeUnit.SECONDS)
-                if (next) {
-                    // wait until no requests are added within 100ms
-                    while (redrawQueue.poll(100, TimeUnit.MILLISECONDS)) {
-                    }
-                    Platform.runLater {
-                        System.err.print "Recompiling... "
-                        def time = System.currentTimeMillis()
-                        draw()
-                        time = System.currentTimeMillis() - time
-                        System.err.println "(done in $time ms)"
-                    }
-                }
+        final TaskId redrawId = Scheduler.add(Duration.ofSeconds(2)) {
+            Platform.runLater {
+                System.err.print "Redrawing... "
+                def time = System.currentTimeMillis()
+                draw()
+                time = System.currentTimeMillis() - time
+                System.err.println "(done in $time ms)"
             }
-        })
-        drawBounceThread.daemon = true
-        drawBounceThread.start()
+        }
 
         def thread = new Thread({
             def watchService = FileSystems.getDefault().newWatchService()
-            script.absoluteFile.parentFile.toPath()
-                    .register(watchService,
-                            [StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY] as WatchEvent.Kind[],
-                            SensitivityWatchEventModifier.HIGH)
+            script.absoluteFile.parentFile.toPath().register(watchService, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY)
             WatchKey key
             while ((key = watchService.take()) != null) {
                 key.pollEvents()
-                redrawQueue.offer(true)
+                Scheduler.requestExecution(redrawId)
                 def valid = key.reset()
                 if (!valid) break
             }
