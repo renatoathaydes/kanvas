@@ -3,6 +3,7 @@ package com.athaydes.kanvas
 import javafx.application.Platform
 import javafx.beans.property.SimpleStringProperty
 import javafx.geometry.BoundingBox
+import javafx.geometry.Bounds
 import javafx.geometry.Insets
 import javafx.geometry.Point2D
 import javafx.scene.Node
@@ -25,6 +26,7 @@ import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicLong
+import java.util.function.Consumer
 
 /**
  * A nice interface for JavaFX's [Canvas] which makes it very easy to draw shapes and text on the screen.
@@ -117,6 +119,27 @@ class Kanvas(width: Double, height: Double) {
     }
 
     /**
+     * Set the objects that should be managed by [Kanvas] to be redrawn as necessary.
+     *
+     * All [ObservableKanvasObject]s are monitored for changes. When any object changes,
+     * a full redraw of the canvas is performed.
+     *
+     * This method should only be called once.
+     */
+    fun manageKanvasObjects(vararg objects: ObservableKanvasObject) {
+        objects.forEach { it.init(this) }
+        loop {
+            if (objects.any { it.isChanged.get() }) {
+                clear()
+                objects.forEach { obj ->
+                    obj.isChanged.set(false)
+                    obj.draw(this)
+                }
+            }
+        }
+    }
+
+    /**
      * Set the period of the looper function, in milliseconds (in other words, how often the looper function should run).
      *
      * The period must be a positive number, or zero to stop the loop.
@@ -148,7 +171,7 @@ class Kanvas(width: Double, height: Double) {
      *
      * Use the [loopPeriod] to change the frame rate, i.e. how often the given [update] function should run.
      */
-    fun loop(update: (dt: Long) -> Unit) {
+    fun loop(update: Consumer<Long>) {
         loopFuture?.cancel(false)
         if (loopPeriod == Duration.ZERO) return // stop the loop
         val period = loopPeriod.toMillis()
@@ -158,7 +181,7 @@ class Kanvas(width: Double, height: Double) {
                 val t = System.currentTimeMillis()
                 val dtVal = t - dt.getAndSet(t)
                 try {
-                    update(dtVal)
+                    update.accept(dtVal)
                 } catch (e: Exception) {
                     System.err.println(e)
                 }
@@ -174,9 +197,9 @@ class Kanvas(width: Double, height: Double) {
     }
 
     /**
-     * Clears the given box within the [Cnavas].
+     * Clears the given box within the [Canvas].
      */
-    fun clear(box: BoundingBox) {
+    fun clear(box: Bounds) {
         ctx.clearRect(box.minX, box.minY, box.width, box.height)
     }
 

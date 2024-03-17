@@ -1,5 +1,5 @@
 import com.athaydes.kanvas.Kanvas
-import com.athaydes.kanvas.gr.KanvasObject
+import com.athaydes.kanvas.ObservableKanvasObject
 import com.athaydes.kanvas.gr.KanvasScript
 import groovy.beans.Bindable
 import groovy.transform.BaseScript
@@ -7,7 +7,6 @@ import groovy.transform.CompileStatic
 import javafx.geometry.BoundingBox
 import javafx.scene.paint.Color
 import javafx.scene.text.Font
-import kotlin.Unit
 
 @BaseScript KanvasScript baseScript
 
@@ -23,17 +22,17 @@ def counter = new Counter()
 def plusButton = new CounterButton('+', 1, 100, 20, counter)
 def minusButton = new CounterButton('-', -1, 20, 20, counter)
 
-kanvasObjects counter, plusButton, minusButton
+manageKanvasObjects counter, plusButton, minusButton
 
 @CompileStatic
 @Bindable
-class Counter implements KanvasObject {
+class Counter extends ObservableKanvasObject {
     int value
     final double x = 75, y = 110
     final BoundingBox bounds = new BoundingBox(x, y - 36, 36, 36)
 
     Counter() {
-        addPropertyChangeListener('value') {evt ->
+        addPropertyChangeListener('value') { evt ->
             if (evt.newValue as int < 0) setValue(0)
         }
     }
@@ -47,7 +46,7 @@ class Counter implements KanvasObject {
 
 @CompileStatic
 @Bindable
-class CounterButton implements KanvasObject {
+class CounterButton extends ObservableKanvasObject {
     Counter counter
     final String text
     final double x, y, w, h
@@ -69,7 +68,6 @@ class CounterButton implements KanvasObject {
     void init(Kanvas kanvas) {
         kanvas.mouse.onClick { evt ->
             if (kanvas.mouse.isOn(bounds)) this.counter.value += change
-            Unit.INSTANCE
         }
     }
 

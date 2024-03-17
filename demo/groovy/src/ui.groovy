@@ -1,5 +1,5 @@
 import com.athaydes.kanvas.Kanvas
-import com.athaydes.kanvas.gr.KanvasObject
+import com.athaydes.kanvas.ObservableKanvasObject
 import com.athaydes.kanvas.gr.KanvasScript
 import groovy.beans.Bindable
 import groovy.transform.BaseScript
@@ -23,7 +23,7 @@ isActivated = new ActivatedState(on: false)
 button = new Button(x: 20, y: 40, w: 150, h: 50, activatedState: isActivated, text: 'Click Me!')
 circle = new Circle(x: 200, y: 20, radius: 50, activatedState: isActivated)
 
-kanvasObjects(button, circle)
+manageKanvasObjects button, circle
 
 @CompileStatic
 @Bindable
@@ -33,7 +33,7 @@ class ActivatedState {
 
 @CompileStatic
 @Bindable
-class Circle implements KanvasObject {
+class Circle extends ObservableKanvasObject {
     double x, y, radius
     ActivatedState activatedState
 
@@ -47,7 +47,7 @@ class Circle implements KanvasObject {
 
 @CompileStatic
 @Bindable
-class Button implements KanvasObject {
+class Button extends ObservableKanvasObject {
     double x, y, w, h
     boolean isMouseOn
     String text
@@ -73,16 +73,13 @@ class Button implements KanvasObject {
     }
 
     @Override
-    void update(Kanvas kanvas, long dt) {
-        if (justClickedTime > 0) {
-            setJustClickedTime justClickedTime - dt
-        }
-    }
-
-    @Override
     void draw(Kanvas kanvas) {
-        kanvas.fill(justClickedTime > 0 ? Color.PURPLE :
-                isMouseOn ? Color.INDIGO : Color.LIGHTGRAY)
+        if (justClickedTime > 0) {
+            kanvas.fill(Color.PURPLE)
+            setJustClickedTime(justClickedTime - 30)
+        } else {
+            kanvas.fill isMouseOn ? Color.INDIGO : Color.LIGHTGRAY
+        }
         kanvas.at x, y rectangle(w, h, true)
         kanvas.font(Font.font(24), isMouseOn ? Color.WHITE : Color.BLACK)
         kanvas.at x + 28, y + 32 text(text)

@@ -2,10 +2,10 @@ package com.athaydes.kanvas.gr
 
 import com.athaydes.kanvas.Kanvas
 import com.athaydes.kanvas.Keyboard
+import com.athaydes.kanvas.ObservableKanvasObject
 import com.athaydes.kanvas.SaveKt
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
-import kotlin.Unit
 
 import java.beans.PropertyChangeEvent
 import java.beans.PropertyChangeListener
@@ -56,6 +56,24 @@ abstract class KanvasScript extends Script {
     }
 
     /**
+     * Set the objects that should be managed by Kanvas to be redrawn as necessary.
+     *
+     * All {@link ObservableKanvasObject}s are monitored for changes. When any object changes,
+     * a full redraw of the canvas is performed.
+     *
+     * This method should only be called once.
+     *
+     * All given objects should have the {@link groovy.beans.Bindable} annotation,
+     * which is a replacement for Kotlin delegate properties as using them is not easy to do from Groovy/Java.
+     */
+    void manageKanvasObjects(ObservableKanvasObject... objects) {
+        for (object in objects) {
+            watchForChangesIn(new ObservablePropertySupport(object))
+        }
+        kanvas.manageKanvasObjects(objects)
+    }
+
+    /**
      * Set an updater function to run in a loop and update the Kanvas.
      *
      * A looper is normally used to create Kanvas animations.
@@ -67,39 +85,13 @@ abstract class KanvasScript extends Script {
         this.looper = looper
         kanvas.loop { long dt ->
             looper dt
-            Unit.INSTANCE
         }
     }
 
     @CompileStatic
-    void kanvasObjects(KanvasObject... objects) {
-        managePogos objects.collect { obj ->
-            new PogoWrapper(obj)
-        }
-    }
-
-    @CompileStatic
-    private void managePogos(List<PogoWrapper> pogos) {
-        for (pogo in pogos) {
-            pogo.init(kanvas)
-            watchForChangesIn pogo
-        }
-
-        loop { long dt ->
-            for (pogo in pogos) {
-                pogo.update(kanvas, dt)
-                if (pogo.isDirty.get()) {
-                    pogo.draw(kanvas)
-                    pogo.isDirty.set false
-                }
-            }
-        }
-    }
-
-    @CompileStatic
-    private void watchForChangesIn(PogoWrapper pogo) {
+    private void watchForChangesIn(ObservablePropertySupport pogo) {
         PropertyChangeListener listener = { PropertyChangeEvent evt ->
-            pogo.isDirty.set true
+            pogo.changed = true
         }
         pogo.addPropertyChangeListener(listener)
         watchForChangesInNestedProperties(pogo.pogo, listener)

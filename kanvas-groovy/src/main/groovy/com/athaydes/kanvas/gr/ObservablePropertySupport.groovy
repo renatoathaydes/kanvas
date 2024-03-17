@@ -1,51 +1,24 @@
 package com.athaydes.kanvas.gr
 
-import com.athaydes.kanvas.Kanvas
+import com.athaydes.kanvas.ObservableKanvasObject
 import groovy.transform.Canonical
-import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 
 import java.beans.PropertyChangeListener
-import java.util.concurrent.atomic.AtomicBoolean
-
-interface KanvasObject {
-    default void init(Kanvas kanvas) {
-    }
-
-    default void update(Kanvas kanvas, long dt) {
-    }
-
-    void draw(Kanvas kanvas)
-}
 
 @Canonical
 @PackageScope
-class PogoWrapper implements KanvasObject {
+class ObservablePropertySupport extends ObservableKanvasObject {
 
-     final KanvasObject pogo
+    @Delegate
+    final ObservableKanvasObject pogo
 
-    final AtomicBoolean isDirty = new AtomicBoolean( true )
-
-    PogoWrapper(KanvasObject pogo) {
+    ObservablePropertySupport(ObservableKanvasObject pogo) {
         this.pogo = pogo
     }
 
-    @CompileStatic
-    @Override
-    void init(Kanvas kanvas) {
-        pogo.init(kanvas)
-    }
-
-    @CompileStatic
-    @Override
-    void update(Kanvas kanvas, long dt) {
-        pogo.update(kanvas, dt)
-    }
-
-    @CompileStatic
-    @Override
-    void draw(Kanvas kanvas) {
-        pogo.draw(kanvas)
+    void setChanged(boolean changed) {
+        pogo.isChanged().set(changed)
     }
 
     void addPropertyChangeListener(PropertyChangeListener listener) {
