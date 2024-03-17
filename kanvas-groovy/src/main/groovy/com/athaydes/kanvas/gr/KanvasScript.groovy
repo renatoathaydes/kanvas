@@ -5,6 +5,7 @@ import com.athaydes.kanvas.Keyboard
 import com.athaydes.kanvas.SaveKt
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
+import kotlin.Unit
 
 import java.beans.PropertyChangeEvent
 import java.beans.PropertyChangeListener
@@ -56,6 +57,7 @@ abstract class KanvasScript extends Script {
         this.looper = looper
         kanvas.loop { long dt ->
             looper dt
+            Unit.INSTANCE
         }
     }
 

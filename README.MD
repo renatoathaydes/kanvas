@@ -221,6 +221,6 @@ To install the current version of the library in your local maven cache, use
     
 Since this library uses JavaFX, make sure that you use a jdk with JavaFX! For example, using [SDKMAN!](https://sdkman.io/):
 
-    sdk install java 11.0.8.fx-zulu
+    sdk install java 21.0.2.fx-librca
     
 

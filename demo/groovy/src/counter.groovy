@@ -7,6 +7,7 @@ import groovy.transform.CompileStatic
 import javafx.geometry.BoundingBox
 import javafx.scene.paint.Color
 import javafx.scene.text.Font
+import kotlin.Unit
 
 @BaseScript KanvasScript baseScript
 
@@ -68,6 +69,7 @@ class CounterButton implements KanvasObject {
     void init(Kanvas kanvas) {
         kanvas.mouse.onClick { evt ->
             if (kanvas.mouse.isOn(bounds)) this.counter.value += change
+            Unit.INSTANCE
         }
     }
 

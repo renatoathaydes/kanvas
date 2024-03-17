@@ -1,7 +1,7 @@
 plugins {
+    id 'java-library'
     id 'groovy'
-    id 'maven'
-    id 'signing'
+    id 'maven-publish'
 }
 
 group 'com.athaydes.kanvas'
@@ -9,7 +9,7 @@ version project.property('kanvas.core.version')
 description 'A Groovy DSL for JavaFX Canvas'
 
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 test {
@@ -17,27 +17,16 @@ test {
 }
 
 dependencies {
-    implementation 'org.codehaus.groovy:groovy:3.0.7'
-    compile project(':kanvas-core')
+    api 'org.apache.groovy:groovy:4.0.20'
+    implementation project(':kanvas-core')
 
     testImplementation platform('org.junit:junit-bom:5.7.1')
     testImplementation "org.junit.jupiter:junit-jupiter-api"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
 }
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
-
-task sourcesJar(type: Jar, dependsOn: classes) {
-    from sourceSets.main.allSource
-    classifier "sources"
-    extension "jar"
-}
-
-task javadocJar(type: Jar) {
-    classifier "javadoc"
-    from javadoc
-}
+sourceCompatibility = '21'
+targetCompatibility = '21'
 
 jar {
     manifest {
@@ -50,64 +39,58 @@ jar {
 
 /* Publishing config */
 
-artifacts {
-    archives javadocJar, sourcesJar
+java {
+    withJavadocJar()
+    withSourcesJar()
 }
 
-signing {
-    sign configurations.archives
-}
-
-def getProjectProperty = { String propertyName ->
-    project.properties[propertyName]
-}
-
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                authentication(
-                        userName: getProjectProperty("ossrhUsername"),
-                        password: getProjectProperty("ossrhPassword"))
-            }
-
-            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-                authentication(
-                        userName: getProjectProperty("ossrhUsername"),
-                        password: getProjectProperty("ossrhPassword"))
-            }
-
-            pom.project {
-                inceptionYear '2020'
-                name project.name
-                packaging 'jar'
-                description project.description
-
-                url 'https://github.com/renatoathaydes/kanvas'
-
-                scm {
-                    connection 'git@github.com:renatoathaydes/kanvas.git'
-                    developerConnection 'git@github.com:renatoathaydes/kanvas.git'
-                    url 'https://github.com/renatoathaydes/kanvas'
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = 'kanvas-groovy'
+            from components.java
+            versionMapping {
+                usage('java-api') {
+                    fromResolutionOf('runtimeClasspath')
                 }
-
+                usage('java-runtime') {
+                    fromResolutionResult()
+                }
+            }
+            pom {
+                name = 'kanvas-core'
+                description = project.description
+                url = 'https://github.com/renatoathaydes/kanvas'
                 licenses {
                     license {
-                        name 'The Apache License, Version 2.0'
-                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
                     }
                 }
-
                 developers {
                     developer {
-                        id 'renatoathaydes'
-                        name 'Renato Athaydes'
-                        email 'renato@athaydes.com'
+                        id = 'renatoathaydes'
+                        name = 'Renato Athaydes'
+                        email = 'renato@athaydes.com'
                     }
+                }
+                scm {
+                    connection = 'git@github.com:renatoathaydes/kanvas.git'
+                    developerConnection = 'git@github.com:renatoathaydes/kanvas.git'
+                    url = 'https://github.com/renatoathaydes/kanvas'
                 }
             }
         }
     }
+    repositories {
+        maven {
+            def releasesRepoUrl = layout.buildDirectory.dir('repos/releases')
+            def snapshotsRepoUrl = layout.buildDirectory.dir('repos/snapshots')
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+        }
+    }
+}
+
+javadoc {
+    options.addBooleanOption('html5', true)
 }

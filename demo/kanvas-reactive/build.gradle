@@ -6,29 +6,29 @@ plugins {
 group 'com.athaydes.kanvas'
 version '1.0-SNAPSHOT'
 
+repositories {
+    mavenCentral()
+}
+
 sourceSets {
     main.kotlin.srcDirs = ['src']
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib"
     implementation project(':kanvas-core')
-    implementation 'org.reduxkotlin:redux-kotlin:0.5.3'
+    implementation 'org.reduxkotlin:redux-kotlin:0.6.1', {
+        exclude module: 'org.jetbrains.kotlin'
+    }
 }
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
-
-compileKotlin {
-    kotlinOptions.jvmTarget = "1.8"
-}
-
-compileTestKotlin {
-    kotlinOptions.jvmTarget = "1.8"
-}
+sourceCompatibility = '21'
+targetCompatibility = '21'
 
 jar {
-    archiveName 'kanvas-reactive-demo.jar'
+    dependsOn ':kanvas-core:jar'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    archiveFileName = 'kanvas-reactive-demo.jar'
     manifest {
         attributes "Main-Class": "Launcher"
     }

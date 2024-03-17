@@ -6,28 +6,25 @@ plugins {
 group 'com.athaydes.kanvas'
 version '1.0-SNAPSHOT'
 
+repositories {
+    mavenCentral()
+}
+
 sourceSets {
     main.kotlin.srcDirs = ['src']
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib"
     implementation project(':kanvas-core')
 }
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
-
-compileKotlin {
-    kotlinOptions.jvmTarget = "1.8"
-}
-
-compileTestKotlin {
-    kotlinOptions.jvmTarget = "1.8"
-}
+sourceCompatibility = '21'
+targetCompatibility = '21'
 
 jar {
-    archiveName 'kanvas-to-image.jar'
+    dependsOn ':kanvas-core:jar'
+    archiveFileName = 'kanvas-to-image.jar'
     manifest {
         attributes "Main-Class": "ImageDemoKt"
     }

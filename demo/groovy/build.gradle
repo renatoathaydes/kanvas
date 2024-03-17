@@ -6,7 +6,7 @@ group 'com.athaydes.kanvas'
 version '1.0-SNAPSHOT'
 
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 sourceSets {
@@ -16,14 +16,14 @@ sourceSets {
 dependencies {
     implementation project(':kanvas-core')
     implementation project(':kanvas-groovy')
-    implementation 'org.codehaus.groovy:groovy:3.0.4'
 }
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
+sourceCompatibility = '21'
+targetCompatibility = '21'
 
 jar {
-    archiveName 'kanvas-groovy-demo.jar'
+    dependsOn ':kanvas-core:jar'
+    archiveFileName = 'kanvas-groovy-demo.jar'
     manifest {
         attributes "Main-Class": "Launcher"
     }
