@@ -55,7 +55,8 @@ Result:
 
 ### Animations
 
-If you want to create animations rather than static images, you can use the `loop` function as in the example below:
+If you want to create animations rather than static images, you can use the `loop` function within your `draw`
+function implementation, as in the example below:
 
 > To change the frame rate, use the `loopPeriod` function, which accepts a number (milliseconds) or `java.time.Duration`.
 
@@ -72,6 +73,7 @@ class AnimationKanvasDemo : KanvasApp() {
         var vy: Double = 0.2,
         var color: Color = Color.BLACK
     ) {
+        // dt is the time in milliseconds between invocations
         fun update(k: Kanvas, dt: Long) {
             x += vx * dt
             y += vy * dt

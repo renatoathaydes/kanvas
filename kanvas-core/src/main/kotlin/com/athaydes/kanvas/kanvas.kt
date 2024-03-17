@@ -82,7 +82,15 @@ class Kanvas(width: Double, height: Double) {
 
     private var fontColor: Paint = Color.BLACK
 
-    val titleProperty = SimpleStringProperty()
+    internal val titleProperty = SimpleStringProperty()
+
+    /**
+     * Whether the Scene should be resizable.
+     *
+     * This only has effect if set within the initial invocation of [KanvasApp.draw] or,
+     * preferrably, in [KanvasApp.configure].
+     */
+    var resizable: Boolean = false
 
     val node: Node get() = pane
     val width: Double get() = canvas.width

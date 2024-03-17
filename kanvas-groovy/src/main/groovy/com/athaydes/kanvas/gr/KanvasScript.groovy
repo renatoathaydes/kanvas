@@ -29,6 +29,16 @@ abstract class KanvasScript extends Script {
     }
 
     /**
+     * Set whether the Scene should be resizable.
+     *
+     * This only has effect if called before the Kanvas initial drawing.
+     * @param isResizable
+     */
+    void resizable(boolean isResizable) {
+        kanvas.resizable = isResizable
+    }
+
+    /**
      * Save the Kanvas to an image file.
      * @param file to store image
      * @param formatName informal name of the format (see {@link javax.imageio.ImageIO}).
