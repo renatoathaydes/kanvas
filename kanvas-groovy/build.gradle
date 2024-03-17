@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'com.athaydes.kanvas'
-version project.property('kanvas.core.version')
+version project.property('kanvas.groovy.version')
 description 'A Groovy DSL for JavaFX Canvas'
 
 repositories {

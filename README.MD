@@ -9,6 +9,13 @@ _This diagram, as well as the logo above, were produced by Kanvas itself!_
 
 ![Kanvas Project Diagram](demo/screenshots/kanvas-project.png)
 
+## Requirements
+
+Kanvas requires Java 21+ with JavaFX.
+
+> Hint: use [SDKMAN](https://sdkman.io) to obtain a suitable JDK
+> (e.g. a Liberica or Zulu JDK with the `.fx` suffix).
+
 ### kanvas-core
 
 > Maven coordinates: `com.athaydes.kanvas:kanvas-core:<version>`
@@ -215,12 +222,20 @@ Another Kotlin example that shows how to save a Kanvas as an image file (e.g. PN
 
 ## Development
 
+To build the jars:
+
+    ./gradlew jar
+
+To also execute the tests:
+
+    ./gradlew check
+
 To install the current version of the library in your local maven cache, use
 
     ./gradlew install
-    
-Since this library uses JavaFX, make sure that you use a jdk with JavaFX! For example, using [SDKMAN!](https://sdkman.io/):
+
+Since this library uses JavaFX, make sure that you use a JDK with JavaFX! For example,
+using [SDKMAN!](https://sdkman.io/):
 
     sdk install java 21.0.2.fx-librca
     
-
