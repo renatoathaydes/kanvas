@@ -5,7 +5,8 @@ either a Kotlin or Groovy DSL.
 
 ## Modules
 
-_This diagram, as well as the logo above, were produced by Kanvas itself!_
+_This diagram, as well as the logo above, were produced by Kanvas itself
+([Logo source code](demo/groovy/src/kanvas-logo.groovy) / [Diagram source code](demo/groovy/src/kanvas-project-diagram.groovy))!_
 
 ![Kanvas Project Diagram](demo/screenshots/kanvas-project.png)
 
@@ -197,7 +198,7 @@ For details on how to run Kanvas Groovy scripts, see the [Groovy Demo](demo/groo
 
 [Kotlin Demo](demo/kotlin/)
 
-Contains a basic example as well as a simple animation.
+Contains several Kotlin examples similar to the Groovy examples below.
 
 [Groovy Demo](demo/groovy/)
 
@@ -207,6 +208,8 @@ stand-alone Groovy launcher or from a normal jar built from a Gradle project.
 * [kanvas-project-diagram.groovy](demo/groovy/src/kanvas-project-diagram.groovy) (the diagram shown at the top of this page)
 * [animation.groovy](demo/groovy/src/animation.groovy) (simple animation)
 * [sprites.groovy](demo/groovy/src/sprites.groovy) (shows keyboard event handling, usage of sprites and transformations)
+* [observable-objects.groovy](demo/groovy/src/observable-objects.groovy) (usage of observable objects to implement mouse
+  dragging)
 * [showcase.groovy](demo/groovy/src/showcase.groovy) (shown below)
 
 ![Showcase](demo/screenshots/showcase.png)
