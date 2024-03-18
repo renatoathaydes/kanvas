@@ -109,6 +109,22 @@ class Kanvas(width: Double, height: Double) {
     val mouse: Mouse by lazy { Mouse(node) }
 
     /**
+     * Set the canvas' width.
+     * @param w width
+     */
+    fun width(w: Double) {
+        canvas.width = w
+    }
+
+    /**
+     * Set the canvas' height.
+     * @param h height
+     */
+    fun height(h: Double) {
+        canvas.height = h
+    }
+
+    /**
      * Set the title of this kanvas.
      *
      * This has no effect unless [titleProperty] is bound to a JavaFX component, such at the [Stage]

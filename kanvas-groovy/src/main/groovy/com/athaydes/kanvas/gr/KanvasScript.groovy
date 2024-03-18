@@ -20,14 +20,6 @@ abstract class KanvasScript extends Script {
 
     Keyboard getKeyboard() { kanvas.keyboard }
 
-    void width(double w) {
-        kanvas.canvas.width = w
-    }
-
-    void height(double h) {
-        kanvas.canvas.height = h
-    }
-
     /**
      * Set whether the Scene should be resizable.
      *
