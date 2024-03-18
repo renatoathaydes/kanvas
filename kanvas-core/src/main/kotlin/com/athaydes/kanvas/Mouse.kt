@@ -17,7 +17,7 @@ import java.util.function.Predicate
  * @see Mouse.forgetHandler
  * @see Mouse.onClick
  */
-data class HandlerKey(val key: String)
+data class HandlerKey internal constructor(val key: String)
 
 private class Dragger(
     val accept: Predicate<MouseEvent>,
@@ -25,7 +25,7 @@ private class Dragger(
 )
 
 /**
- * Mouse state.
+ * Mouse state and container of event handlers.
  */
 class Mouse internal constructor(pane: Node) {
 
@@ -103,7 +103,7 @@ class Mouse internal constructor(pane: Node) {
     }
 
     /**
-     * Forget an event handler previously registered with [onClick] or [onMove].
+     * Forget an event handler previously registered with [onClick], [onDrag] or [onMove].
      */
     fun forgetHandler(key: HandlerKey): Boolean {
         return clickHandlers.remove(key) != null
