@@ -20,6 +20,10 @@ import javafx.scene.shape.ArcType
 import javafx.scene.shape.StrokeLineCap
 import javafx.scene.text.Font
 import javafx.stage.Stage
+import java.lang.System.Logger.Level.DEBUG
+import java.lang.System.Logger.Level.INFO
+import java.lang.System.Logger.Level.TRACE
+import java.lang.System.Logger.Level.WARNING
 import java.time.Duration
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
@@ -42,6 +46,11 @@ import java.util.function.Consumer
  * ```
  */
 class Kanvas(width: Double, height: Double) {
+
+    private companion object {
+        val log = System.getLogger(Kanvas::class.qualifiedName)
+    }
+
     val canvas = Canvas(width, height)
     val pane = BorderPane(canvas)
     private val kanvasCtx = KanvasContextImpl(canvas.graphicsContext2D)
@@ -70,10 +79,13 @@ class Kanvas(width: Double, height: Double) {
      * which means they won't affect anything outside of that.
      */
     fun withContext(useContext: (KanvasContext) -> Unit) {
+        log.log(TRACE, "Setting KanvasContext")
         val ctx = canvas.graphicsContext2D
         ctx.save()
         try {
             useContext(kanvasCtx)
+        } catch (e: Exception) {
+            log.log(WARNING, "Problem invoking withContext callback", e)
         } finally {
             ctx.restore()
         }
@@ -143,12 +155,15 @@ class Kanvas(width: Double, height: Double) {
      * This method should only be called once.
      */
     fun manageKanvasObjects(vararg objects: ObservableKanvasObject) {
+        log.log(INFO, "Initializing Kanvas Objects")
         objects.forEach { it.init(this) }
         loop {
             if (objects.any { it.isChanged.get() }) {
+                log.log(DEBUG, "Change detected in Kanvas Object")
                 clear()
                 objects.forEach { obj ->
                     obj.isChanged.set(false)
+                    log.log(DEBUG, "Drawing Kanvas Object: {0}", obj)
                     obj.draw(this)
                 }
             }
@@ -189,17 +204,22 @@ class Kanvas(width: Double, height: Double) {
      */
     fun loop(update: Consumer<Long>) {
         loopFuture?.cancel(false)
-        if (loopPeriod == Duration.ZERO) return // stop the loop
+        if (loopPeriod == Duration.ZERO) {
+            log.log(DEBUG, "Cancelled Kanvas loop")
+            return
+        }
         val period = loopPeriod.toMillis()
+        log.log(DEBUG, "Starting Kanvas loop with period {0}ms", period)
         val dt = AtomicLong(System.currentTimeMillis())
         loopFuture = executor.scheduleAtFixedRate({
             Platform.runLater {
                 val t = System.currentTimeMillis()
                 val dtVal = t - dt.getAndSet(t)
+                log.log(TRACE, "Kanvas loop dt={0}ms", dtVal)
                 try {
                     update.accept(dtVal)
                 } catch (e: Exception) {
-                    System.err.println(e)
+                    log.log(WARNING, "Kanvas loop problem", e)
                 }
             }
         }, period, period, TimeUnit.MILLISECONDS)
@@ -209,6 +229,7 @@ class Kanvas(width: Double, height: Double) {
      * Clear the whole [Canvas].
      */
     fun clear() {
+        log.log(DEBUG, "Clearing whole Canvas")
         ctx.clearRect(0.0, 0.0, canvas.width, canvas.height)
     }
 
@@ -216,6 +237,7 @@ class Kanvas(width: Double, height: Double) {
      * Clears the given box within the [Canvas].
      */
     fun clear(box: Bounds) {
+        log.log(DEBUG, "Clearing Canvas box: {0}", box)
         ctx.clearRect(box.minX, box.minY, box.width, box.height)
     }
 

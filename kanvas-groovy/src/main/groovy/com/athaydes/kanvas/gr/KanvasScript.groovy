@@ -86,8 +86,8 @@ abstract class KanvasScript extends Script {
 
     private void watchForChangesIn(ObservablePropertySupport pogo) {
         PropertyChangeListener listener = { PropertyChangeEvent evt ->
-            log.log Logger.Level.DEBUG, "Property '{0}' changed from '{1}' to '{2}'",
-                    evt.propertyName, evt.oldValue, evt.newValue
+            log.log Logger.Level.DEBUG, 'Property "{0}" of {1} has changed from "{2}" to "{3}"',
+                    evt.propertyName, evt.source, evt.oldValue, evt.newValue
             pogo.changed = true
         }
         pogo.addPropertyChangeListener(listener)

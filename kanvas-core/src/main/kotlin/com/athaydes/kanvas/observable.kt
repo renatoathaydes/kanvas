@@ -1,5 +1,7 @@
 package com.athaydes.kanvas
 
+import java.lang.System.Logger.Level.DEBUG
+import java.lang.System.Logger.Level.TRACE
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.properties.Delegates
 import kotlin.properties.ReadWriteProperty
@@ -11,6 +13,8 @@ import kotlin.reflect.KProperty
 abstract class ObservableKanvasObject {
 
     private companion object {
+        private val log = System.getLogger(ObservableKanvasObject::class.qualifiedName)
+
         private var currentDraggable: ObservableKanvasObject? = null
     }
 
@@ -30,11 +34,18 @@ abstract class ObservableKanvasObject {
             true
         } else if (newValue) {
             if (currentDraggable == null) {
+                log.log(DEBUG, "Setting current draggable element to {0}", this)
                 currentDraggable = this
                 true
-            } else false
+            } else {
+                log.log(TRACE, "Ignoring draggable element update, already dragging something else")
+                false
+            }
         } else {
-            if (currentDraggable === this) currentDraggable = null
+            if (currentDraggable === this) {
+                log.log(TRACE, "Unsetting draggable element")
+                currentDraggable = null
+            }
             true
         }
     }
@@ -64,8 +75,14 @@ abstract class ObservableKanvasObject {
      */
     fun <T> observable(initialValue: T): ReadWriteProperty<Any?, T> {
         val prop = Delegates.observable(initialValue) { p, old, new ->
-            if (!isChanged.get()) isChanged.set(old != new)
-            if (isChanged.get()) onChange(p, old, new)
+            val hasChanged = old != new
+            if (!isChanged.compareAndSet(hasChanged, hasChanged)) {
+                log.log(
+                    TRACE, "Property \"{0}\" of {1} has changed from \"{2}\" to \"{3}\"",
+                    p.name, this, old, new
+                )
+                onChange(p, old, new)
+            }
         }
         properties.add(prop)
         return prop

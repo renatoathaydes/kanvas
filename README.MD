@@ -243,4 +243,11 @@ Since this library uses JavaFX, make sure that you use a JDK with JavaFX! For ex
 using [SDKMAN!](https://sdkman.io/):
 
     sdk install java 21.0.2.fx-librca
-    
+
+### Logging
+
+Kanvas logs using the Java System Logger. The easiest way to configure JUL (which is used by default
+if you don't configure a logging framework):
+
+1. create a config file, e.g. `jul.properties`.
+2. run java with the argument `-Djava.util.logging.config.file=jul.properties`.
