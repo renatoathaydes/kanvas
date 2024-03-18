@@ -1,5 +1,6 @@
 package com.athaydes.kanvas
 
+import javafx.application.Platform
 import javafx.event.EventHandler
 import javafx.scene.Node
 import javafx.scene.Scene
@@ -36,6 +37,18 @@ class Keyboard internal constructor(pane: Node) {
             pressedKeys -= evt.code
             keyReleasedHandlers.values.forEach { it.accept(evt) }
         }
+    }
+
+    /**
+     * Remove all event handlers.
+     */
+    fun clear() {
+        Platform.runLater {
+            keyPressedHandlers.clear()
+            keyReleasedHandlers.clear()
+            handlerCounter.set(0)
+        }
+
     }
 
     /**

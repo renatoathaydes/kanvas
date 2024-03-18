@@ -7,6 +7,7 @@ import com.athaydes.kanvas.SaveKt
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
+import javafx.application.Platform
 
 import java.beans.PropertyChangeEvent
 import java.beans.PropertyChangeListener
@@ -67,7 +68,9 @@ abstract class KanvasScript extends Script {
         for (object in objects) {
             watchForChangesIn(new ObservablePropertySupport(object))
         }
-        kanvas.manageKanvasObjects(objects)
+        Platform.runLater {
+            kanvas.manageKanvasObjects(objects)
+        }
     }
 
     /**

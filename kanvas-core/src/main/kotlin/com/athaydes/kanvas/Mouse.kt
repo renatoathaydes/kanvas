@@ -70,6 +70,19 @@ class Mouse internal constructor(pane: Node) {
     }
 
     /**
+     * Remove all event handlers.
+     */
+    fun clear() {
+        Platform.runLater {
+            clickHandlers.clear()
+            moveHandlers.clear()
+            dragHandlers.clear()
+            handlerCounter.set(0)
+        }
+
+    }
+
+    /**
      * Register a handler for mouse click events.
      *
      * The returned [HandlerKey] can be used to de-register the handler by calling

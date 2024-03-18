@@ -121,6 +121,11 @@ class Kanvas(width: Double, height: Double) {
     val mouse: Mouse by lazy { Mouse(node) }
 
     /**
+     * Get the [Scheduler] for managing tasks.
+     */
+    val scheduler: Scheduler = Scheduler()
+
+    /**
      * Set the canvas' width.
      * @param w width
      */
@@ -223,6 +228,27 @@ class Kanvas(width: Double, height: Double) {
                 }
             }
         }, period, period, TimeUnit.MILLISECONDS)
+    }
+
+    /**
+     * Reset this [Kanvas].
+     *
+     * The following actions are performed:
+     *
+     * - all event handlers added via [Mouse] and [Keyboard] are removed.
+     * - all observable objects added via [manageKanvasObjects] are forgotten.
+     * - the Kanvas loop is cancelled.
+     * - the [Scheduler] is cleared.
+     * - this [Kanvas] is cleared.
+     */
+    fun reset() {
+        log.log(DEBUG, "Resetting Canvas")
+        mouse.clear()
+        keyboard.clear()
+        loopFuture?.cancel(false)
+        loopFuture = null
+        scheduler.clear()
+        clear()
     }
 
     /**

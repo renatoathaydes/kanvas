@@ -47,8 +47,9 @@ class GroovyKanvasApp extends KanvasApp {
         if (!script.file) {
             throw new FileNotFoundException(script.absolutePath)
         }
+        final scheduler = new Scheduler()
 
-        final TaskId redrawId = Scheduler.add(Duration.ofSeconds(2)) {
+        final TaskId redrawId = scheduler.add(Duration.ofSeconds(2)) {
             Platform.runLater {
                 System.err.print "Redrawing... "
                 def time = System.currentTimeMillis()
@@ -64,7 +65,7 @@ class GroovyKanvasApp extends KanvasApp {
             WatchKey key
             while ((key = watchService.take()) != null) {
                 key.pollEvents()
-                Scheduler.requestExecution(redrawId)
+                scheduler.requestExecution(redrawId)
                 def valid = key.reset()
                 if (!valid) break
             }
@@ -74,7 +75,7 @@ class GroovyKanvasApp extends KanvasApp {
     }
 
     Kanvas draw() {
-        kanvas.clear()
+        kanvas.reset()
         def kanvasScript = shell.parse(script) as KanvasScript
         executeAndGetLooper kanvasScript
         return kanvas
