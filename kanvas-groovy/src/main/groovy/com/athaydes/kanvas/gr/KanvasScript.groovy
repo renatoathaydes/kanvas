@@ -4,13 +4,18 @@ import com.athaydes.kanvas.Kanvas
 import com.athaydes.kanvas.Keyboard
 import com.athaydes.kanvas.ObservableKanvasObject
 import com.athaydes.kanvas.SaveKt
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 
 import java.beans.PropertyChangeEvent
 import java.beans.PropertyChangeListener
+import java.lang.System.Logger
 
+@CompileStatic
 abstract class KanvasScript extends Script {
+
+    private static final Logger log = System.getLogger(KanvasScript.name)
 
     @Delegate
     Kanvas kanvas
@@ -72,7 +77,6 @@ abstract class KanvasScript extends Script {
      *
      * @param looper to execute in a loop
      */
-    @CompileStatic
     void loop(Closure<?> looper) {
         this.looper = looper
         kanvas.loop { long dt ->
@@ -80,23 +84,30 @@ abstract class KanvasScript extends Script {
         }
     }
 
-    @CompileStatic
     private void watchForChangesIn(ObservablePropertySupport pogo) {
         PropertyChangeListener listener = { PropertyChangeEvent evt ->
+            log.log Logger.Level.DEBUG, "Property '{0}' changed from '{1}' to '{2}'",
+                    evt.propertyName, evt.oldValue, evt.newValue
             pogo.changed = true
         }
         pogo.addPropertyChangeListener(listener)
         watchForChangesInNestedProperties(pogo.pogo, listener)
     }
 
+    @CompileDynamic
     private void watchForChangesInNestedProperties(object, PropertyChangeListener listener) {
+        def skipList = ['class', 'propertyChangeListeners', 'metaClass']
         for (prop in object.properties.keySet()) {
+            if (prop in skipList) continue
             def nestedObject = object[prop]
             if (nestedObject.respondsTo('addPropertyChangeListener')) {
+                log.log Logger.Level.TRACE, "Adding listener to property: {0} of {1}", prop, object
                 try {
                     nestedObject.addPropertyChangeListener(listener)
                     watchForChangesInNestedProperties(nestedObject, listener)
-                } catch (ignored) {
+                } catch (e) {
+                    log.log(Logger.Level.DEBUG, "Error adding propertyChangeListener to {0}: {1}",
+                            nestedObject, e)
                 }
             }
         }
