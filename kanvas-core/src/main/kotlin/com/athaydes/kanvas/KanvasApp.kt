@@ -1,7 +1,6 @@
 package com.athaydes.kanvas
 
 import javafx.application.Application
-import javafx.beans.InvalidationListener
 import javafx.scene.Group
 import javafx.scene.Parent
 import javafx.scene.Scene
@@ -46,12 +45,6 @@ abstract class KanvasApp : Application() {
         }
         primaryStage.scene = Scene(root)
         primaryStage.titleProperty().bindBidirectional(kanvas.titleProperty)
-        primaryStage.widthProperty().addListener(InvalidationListener {
-            root.maxWidth(primaryStage.width)
-        })
-        primaryStage.heightProperty().addListener(InvalidationListener {
-            root.maxHeight(primaryStage.height)
-        })
         primaryStage.centerOnScreen()
         primaryStage.show()
     }
