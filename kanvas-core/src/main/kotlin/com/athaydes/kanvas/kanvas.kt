@@ -106,6 +106,11 @@ class Kanvas(width: Double, height: Double) {
      */
     var resizable: Boolean = false
 
+    /**
+     * State that can be kept within this [Kanvas] instance.
+     */
+    var state: Any? = null
+
     val node: Node get() = pane
     val width: Double get() = canvas.width
     val height: Double get() = canvas.height
@@ -129,16 +134,18 @@ class Kanvas(width: Double, height: Double) {
      * Set the canvas' width.
      * @param w width
      */
-    fun width(w: Double) {
+    fun width(w: Double): Kanvas {
         canvas.width = w
+        return this
     }
 
     /**
      * Set the canvas' height.
      * @param h height
      */
-    fun height(h: Double) {
+    fun height(h: Double): Kanvas {
         canvas.height = h
+        return this
     }
 
     /**
@@ -147,8 +154,9 @@ class Kanvas(width: Double, height: Double) {
      * This has no effect unless [titleProperty] is bound to a JavaFX component, such at the [Stage]
      * (which is done by [KanvasApp], for example).
      */
-    fun title(text: String) {
+    fun title(text: String): Kanvas {
         titleProperty.set(text)
+        return this
     }
 
     /**
