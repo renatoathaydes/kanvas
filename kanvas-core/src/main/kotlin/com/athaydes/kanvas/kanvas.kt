@@ -177,10 +177,19 @@ class Kanvas(width: Double, height: Double) {
                 objects.forEach { obj ->
                     obj.isChanged.set(false)
                     log.log(DEBUG, "Drawing Kanvas Object: {0}", obj)
-                    obj.draw(this)
+                    val time = withTimer(enabled = log.isLoggable(DEBUG)) {
+                        obj.draw(this)
+                    }
+                    log.log(DEBUG, "Kanvas Object drawn in {1}ms: {0}", obj, time)
                 }
             }
         }
+    }
+
+    private fun withTimer(enabled: Boolean, action: () -> Unit): Long {
+        val startTime = if (enabled) System.currentTimeMillis() else 0L
+        action()
+        return if (enabled) System.currentTimeMillis() - startTime else 0L
     }
 
     /**
