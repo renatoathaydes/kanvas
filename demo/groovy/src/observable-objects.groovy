@@ -45,7 +45,8 @@ class DraggableCircle extends ObservableKanvasObject {
 
     @Override
     void draw(Kanvas kanvas) {
-        kanvas.at(x, y) fill(fill) circle(radius, true)
+        kanvas.at x, y fill(fill) circle(radius, true)
+        kanvas.at 10, 30 text 'Drag the circles around!'
     }
 
     private isOn(Mouse mouse) {

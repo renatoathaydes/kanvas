@@ -113,6 +113,38 @@ Result:
 
 ![Kotlin Animation](demo/screenshots/kanvas-animation.gif)
 
+### Observable State
+
+Kanvas supports registering observable objects.
+
+An Observable Object is one that extends `ObservableKanvasObject`. They are automatically redrawn when their state
+is modified.
+
+To register observable objects, call `Kanvas#manageKanvasObjects`.
+
+[Kotlin Observable Objects Example](demo/kotlin/src/observable-objects.kt).
+
+[Groovy Observable Objects Example](demo/groovy/src/observable-objects.groovy)
+
+In Kotlin, observable fields are declared as follows:
+
+```kotlin
+class Example : ObservableKanvasObject() {
+    var x by observable(50.0)
+    var y by observable(100.0)
+}
+```
+
+In Groovy, the `@Bindable` annotation must be used (so all public fields are observable):
+
+```groovy
+@CompileStatic
+@Bindable
+class Example extends ObservableKanvasObject {
+    double x = 50, y = 100
+}
+```
+
 ## kanvas-groovy
 
 > Maven coordinates: `com.athaydes.kanvas:kanvas-groovy:<version>`
@@ -126,6 +158,7 @@ import com.athaydes.kanvas.gr.KanvasScript
 import groovy.transform.BaseScript
 import javafx.scene.paint.Color
 
+// this is here only to make the IDE auto-completion better!
 @BaseScript KanvasScript baseScript
 
 title 'Groovy Kanvas Demo'
@@ -137,7 +170,11 @@ fill Color.BLUE
 at 50, 30 circle 100, true
 ```
 
-Animation:
+<details>
+
+<summary style="font-size: large">More about Groovy (with hot reloading support)</summary>
+
+Animations in Groovy work similarly to Kotlin:
 
 > To make sure your animations run smoothly, it's a good idea to use `@CompileStatic`
 > in the method or class that draws on the Kanvas, as in the example below.
@@ -208,6 +245,8 @@ Groovy script and hot-reload it as it changes.
 All files under the same directory tree as the Groovy script are watched.
 
 For details on how to run Kanvas Groovy scripts, see the [Groovy Demo](demo/groovy/).
+
+</details>
 
 ## Demos
 
