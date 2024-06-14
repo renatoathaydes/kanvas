@@ -7,6 +7,8 @@ import com.athaydes.kanvas.SaveKt
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
+import groovy.transform.stc.ClosureParams
+import groovy.transform.stc.SimpleType
 import javafx.application.Platform
 
 import java.beans.PropertyChangeEvent
@@ -80,7 +82,7 @@ abstract class KanvasScript extends Script {
      *
      * @param looper to execute in a loop
      */
-    void loop(Closure<?> looper) {
+    void loop(@ClosureParams(value = SimpleType, options = 'long') Closure<?> looper) {
         this.looper = looper
         kanvas.loop { long dt ->
             looper dt
