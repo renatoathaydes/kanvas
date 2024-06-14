@@ -67,38 +67,45 @@ import com.athaydes.kanvas.KanvasApp
 import javafx.scene.paint.Color
 
 class AnimationKanvasDemo : KanvasApp() {
-    data class State(
-        var x: Double = 0.0,
-        var y: Double = 0.0,
-        var vx: Double = 0.3,
-        var vy: Double = 0.2,
-        var color: Color = Color.BLACK
-    ) {
-        // dt is the time in milliseconds between invocations
-        fun update(k: Kanvas, dt: Long) {
-            x += vx * dt
-            y += vy * dt
-            if (x > k.width - 40 || x < 0) vx *= -1
-            if (y > k.height - 40 || y < 0) vy *= -1
-            k.fill(color).at(x, y).circle(radius = 20.0, fill = true)
-        }
-    }
 
-    val state = listOf(
-        State(color = Color.BLUE),
-        State(color = Color.GREEN, x = 100.0, y = 140.0)
-    )
-
-    override fun draw(): Kanvas {
-        return Kanvas(300.0, 250.0).apply {
-            title("Kanvas Animation Demo")
-            background(Color.INDIGO)
-            loop { dt ->
-                clear()
-                state.forEach { s -> s.update(this, dt) }
-            }
-        }
+  data class KanvasCircle(
+    var x: Double = 0.0,
+    var y: Double = 0.0,
+    var vx: Double = 0.3,
+    var vy: Double = 0.2,
+    val diameter: Double = 40.0,
+    var color: Color = Color.BLACK
+  ) {
+    fun update(k: Kanvas, dt: Long) {
+      x += vx * dt
+      y += vy * dt
+      if (x + diameter > k.width || x < 0) {
+        vx *= -1
+        x = if (x < 0) 0.0 else k.width - diameter
+      }
+      if (y + diameter > k.height || y < 0) {
+        vy *= -1
+        y = if (y < 0) 0.0 else k.height - diameter
+      }
+      k.fill(color).at(x, y).circle(radius = diameter / 2, fill = true)
     }
+  }
+
+  val circles = listOf(
+    KanvasCircle(color = Color.BLUE),
+    KanvasCircle(color = Color.GREEN, x = 100.0, y = 140.0)
+  )
+
+  override fun draw(): Kanvas {
+    return Kanvas(300.0, 250.0).apply {
+      title("Kanvas Animation Demo")
+      background(Color.INDIGO)
+      loop { dt ->
+        clear()
+        circles.forEach { s -> s.update(this, dt) }
+      }
+    }
+  }
 }
 ```
 
@@ -151,26 +158,34 @@ width 300
 height 250
 
 @CompileStatic
-class State {
-    double x = 30
-    double y = 30
-    double vx = 0.3
-    double vy = 0.2
-    Color color
+class KanvasCircle {
+  double x = 30
+  double y = 30
+  double vx = 0.3
+  double vy = 0.2
+  final double diameter = 40
+  Color color
 
-    void update(Kanvas k, long dt) {
-        x += vx * dt
-        y += vy * dt
-        if (x > k.width - 40 || x < 0) vx *= -1
-        if (y > k.height - 40 || y < 0) vy *= -1
-        k.fill color
-        k.at x, y circle 20, true
+  void update(Kanvas k, long dt) {
+    x += vx * dt
+    y += vy * dt
+    // keep the circle within the canvas
+    if (x + diameter > k.width || x < 0) {
+      vx *= -1
+      x = x < 0 ? 0 : k.width - diameter
     }
+    if (y + diameter > k.height || y < 0) {
+      vy *= -1
+      y = y < 0 ? 0 : k.height - diameter
+    }
+    k.fill color
+    k.at x, y circle((diameter / 2.0).doubleValue(), true)
+  }
 }
 
-final state = [
-        new State(color: Color.BLUE),
-        new State(color: Color.GREEN, x: 100, y: 140),
+final circles = [
+        new KanvasCircle(color: Color.BLUE),
+        new KanvasCircle(color: Color.GREEN, x: 100, y: 140),
 ]
 
 background Color.INDIGO
@@ -178,8 +193,8 @@ background Color.INDIGO
 loopPeriod Duration.ofMillis(15)
 
 loop { long dt ->
-    clear()
-    state*.update(kanvas, dt)
+  clear()
+  circles*.update(kanvas, dt)
 }
 ```
 

@@ -13,33 +13,34 @@ width 300
 height 250
 
 @CompileStatic
-class State {
+class KanvasCircle {
     double x = 30
     double y = 30
     double vx = 0.3
     double vy = 0.2
-    final double radius = 20
+    final double diameter = 40
     Color color
 
     void update(Kanvas k, long dt) {
         x += vx * dt
         y += vy * dt
-        if (x > k.width - 2 * radius || x < 0) {
+        // keep the circle within the canvas
+        if (x + diameter > k.width || x < 0) {
             vx *= -1
-            x = x < 0 ? 0 : k.width - 2 * radius
+            x = x < 0 ? 0 : k.width - diameter
         }
-        if (y > k.height - 2 * radius || y < 0) {
+        if (y + diameter > k.height || y < 0) {
             vy *= -1
-            y = y < 0 ? 0 : k.height - 2 * radius
+            y = y < 0 ? 0 : k.height - diameter
         }
         k.fill color
-        k.at x, y circle radius, true
+        k.at x, y circle((diameter / 2.0).doubleValue(), true)
     }
 }
 
-final state = [
-        new State(color: Color.BLUE),
-        new State(color: Color.GREEN, x: 100, y: 140),
+final circles = [
+        new KanvasCircle(color: Color.BLUE),
+        new KanvasCircle(color: Color.GREEN, x: 100, y: 140),
 ]
 
 background Color.INDIGO
@@ -48,5 +49,5 @@ loopPeriod Duration.ofMillis(15)
 
 loop { long dt ->
     clear()
-    state*.update(kanvas, dt)
+    circles*.update(kanvas, dt)
 }

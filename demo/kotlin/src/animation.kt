@@ -3,25 +3,33 @@ import com.athaydes.kanvas.KanvasApp
 import javafx.scene.paint.Color
 
 class AnimationKanvasDemo : KanvasApp() {
-    data class State(
+
+    data class KanvasCircle(
         var x: Double = 0.0,
         var y: Double = 0.0,
         var vx: Double = 0.3,
         var vy: Double = 0.2,
+        val diameter: Double = 40.0,
         var color: Color = Color.BLACK
     ) {
         fun update(k: Kanvas, dt: Long) {
             x += vx * dt
             y += vy * dt
-            if (x > k.width - 40 || x < 0) vx *= -1
-            if (y > k.height - 40 || y < 0) vy *= -1
-            k.fill(color).at(x, y).circle(radius = 20.0, fill = true)
+            if (x + diameter > k.width || x < 0) {
+                vx *= -1
+                x = if (x < 0) 0.0 else k.width - diameter
+            }
+            if (y + diameter > k.height || y < 0) {
+                vy *= -1
+                y = if (y < 0) 0.0 else k.height - diameter
+            }
+            k.fill(color).at(x, y).circle(radius = diameter / 2, fill = true)
         }
     }
 
-    val state = listOf(
-        State(color = Color.BLUE),
-        State(color = Color.GREEN, x = 100.0, y = 140.0)
+    val circles = listOf(
+        KanvasCircle(color = Color.BLUE),
+        KanvasCircle(color = Color.GREEN, x = 100.0, y = 140.0)
     )
 
     override fun draw(): Kanvas {
@@ -30,7 +38,7 @@ class AnimationKanvasDemo : KanvasApp() {
             background(Color.INDIGO)
             loop { dt ->
                 clear()
-                state.forEach { s -> s.update(this, dt) }
+                circles.forEach { s -> s.update(this, dt) }
             }
         }
     }
