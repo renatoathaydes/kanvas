@@ -21,7 +21,7 @@ class ObservablesDemo : KanvasApp() {
             circle2.x += 100
 
             // tell Kanvas to manage the observable objects
-            manageKanvasObjects(circle1, circle2)
+            manageKanvasObjects(listOf(circle1, circle2))
         }
     }
 }

@@ -30,7 +30,7 @@ import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicLong
-import java.util.function.Consumer
+import java.util.function.LongConsumer
 
 /**
  * A nice interface for JavaFX's [Canvas] which makes it very easy to draw shapes and text on the screen.
@@ -165,12 +165,35 @@ class Kanvas(width: Double, height: Double) {
      * All [ObservableKanvasObject]s are monitored for changes. When any object changes,
      * a full redraw of the canvas is performed.
      *
-     * This method should only be called once.
+     * This method should only be called once. It sets the [Kanvas.loop]
+     * callback, so its usage is mutually exclusive with using that method directly.
+     *
+     * Use [Kanvas.manageKanvasObjects(java.util.Collection<? extends com.athaydes.kanvas.ObservableKanvasObject>, java.util.function.LongConsumer)]
+     * if you need to set a loop callback.
+     *
+     * @param objects to watch
      */
-    fun manageKanvasObjects(vararg objects: ObservableKanvasObject) {
+    fun manageKanvasObjects(objects: Collection<ObservableKanvasObject>) {
+        manageKanvasObjects(objects) {}
+    }
+
+    /**
+     * Set the objects that should be managed by [Kanvas] to be redrawn as necessary.
+     *
+     * All [ObservableKanvasObject]s are monitored for changes. When any object changes,
+     * a full redraw of the canvas is performed.
+     *
+     * This method should only be called once. It sets the [Kanvas.loop]
+     * callback, so its usage is mutually exclusive with using that method directly.
+     *
+     * @param loop callback to call on each UI loop iteration
+     * @param objects to watch
+     */
+    fun manageKanvasObjects(objects: Collection<ObservableKanvasObject>, loop: LongConsumer) {
         log.log(INFO, "Initializing Kanvas Objects")
         objects.forEach { it.init(this) }
-        loop {
+        loop { dt ->
+            loop.accept(dt)
             if (objects.any { it.isChanged.get() }) {
                 log.log(DEBUG, "Change detected in Kanvas Object")
                 clear()
@@ -224,7 +247,7 @@ class Kanvas(width: Double, height: Double) {
      *
      * Use the [loopPeriod] to change the frame rate, i.e. how often the given [update] function should run.
      */
-    fun loop(update: Consumer<Long>) {
+    fun loop(update: LongConsumer) {
         loopFuture?.cancel(false)
         if (loopPeriod == Duration.ZERO) {
             log.log(DEBUG, "Cancelled Kanvas loop")

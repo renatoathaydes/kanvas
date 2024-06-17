@@ -14,6 +14,7 @@ import javafx.application.Platform
 import java.beans.PropertyChangeEvent
 import java.beans.PropertyChangeListener
 import java.lang.System.Logger
+import java.util.function.LongConsumer
 
 @CompileStatic
 abstract class KanvasScript extends Script {
@@ -56,22 +57,40 @@ abstract class KanvasScript extends Script {
     }
 
     /**
-     * Set the objects that should be managed by Kanvas to be redrawn as necessary.
+     * Set the objects that should be managed by [Kanvas] to be redrawn as necessary.
      *
-     * All {@link ObservableKanvasObject}s are monitored for changes. When any object changes,
+     * All [ObservableKanvasObject]s are monitored for changes. When any object changes,
+     * a full redraw of the canvas is performed.
+     *
+     * This method should only be called once. It sets the {@link Kanvas#loop(java.util.function.LongConsumer)}
+     * callback, so its usage is mutually exclusive with using that method directly.
+     * Use {@link KanvasScript#manageKanvasObjects(java.util.Collection, java.util.function.LongConsumer)}
+     * if you need to set a loop callback.
+     *
+     * @param objects to watch
+     */
+    void manageKanvasObjects(Collection<ObservableKanvasObject> objects) {
+        // do not use a default parameter as that causes a clash with the @Delegate generated method
+        manageKanvasObjects(objects, {})
+    }
+
+    /**
+     * Set the objects that should be managed by [Kanvas] to be redrawn as necessary.
+     *
+     * All [ObservableKanvasObject]s are monitored for changes. When any object changes,
      * a full redraw of the canvas is performed.
      *
      * This method should only be called once.
      *
-     * All given objects should have the {@link groovy.beans.Bindable} annotation,
-     * which is a replacement for Kotlin delegate properties as using them is not easy to do from Groovy/Java.
+     * @param objects to watch
+     * @param loop callback to call on each UI loop iteration
      */
-    void manageKanvasObjects(ObservableKanvasObject... objects) {
+    void manageKanvasObjects(Collection<ObservableKanvasObject> objects, LongConsumer loop) {
         for (object in objects) {
             watchForChangesIn(new ObservablePropertySupport(object))
         }
         Platform.runLater {
-            kanvas.manageKanvasObjects(objects)
+            kanvas.manageKanvasObjects(objects, loop)
         }
     }
 

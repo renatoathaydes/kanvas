@@ -22,7 +22,7 @@ def counter = new Counter()
 def plusButton = new CounterButton('+', 1, 100, 20, counter)
 def minusButton = new CounterButton('-', -1, 20, 20, counter)
 
-manageKanvasObjects counter, plusButton, minusButton
+manageKanvasObjects([counter, plusButton, minusButton])
 
 @CompileStatic
 @Bindable
