@@ -264,6 +264,7 @@ stand-alone Groovy launcher or from a normal jar built from a Gradle project.
 * [sprites.groovy](demo/groovy/src/sprites.groovy) (shows keyboard event handling, usage of sprites and transformations)
 * [observable-objects.groovy](demo/groovy/src/observable-objects.groovy) (usage of observable objects to implement mouse
   dragging)
+* [turtle.groovy](demo/groovy/src/turtle.groovy) (Logo Turtle-inspired API)
 * [showcase.groovy](demo/groovy/src/showcase.groovy) (shown below)
 
 ![Showcase](demo/screenshots/showcase.png)

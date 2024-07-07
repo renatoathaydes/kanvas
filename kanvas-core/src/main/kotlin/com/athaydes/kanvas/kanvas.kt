@@ -131,6 +131,21 @@ class Kanvas(width: Double, height: Double) {
     val scheduler: Scheduler = Scheduler()
 
     /**
+     * Draw using a [Turtle].
+     *
+     * This makes it easier to make drawings that require rotation, for example.
+     * The Turtle is inspired by the [Logo turtle](https://en.wikipedia.org/wiki/Logo_(programming_language)).
+     */
+    fun withTurtle(useTurtle: (Turtle) -> Unit) {
+        withContext { ctx ->
+            Turtle(this, ctx).let {
+                useTurtle(it)
+                it.done()
+            }
+        }
+    }
+
+    /**
      * Set the canvas' width.
      * @param w width
      */
@@ -390,9 +405,9 @@ class Kanvas(width: Double, height: Double) {
     @JvmOverloads
     fun rectangle(width: Double = 10.0, height: Double = 10.0, fill: Boolean = false): Kanvas {
         if (fill) {
-            ctx.fillRect(x, y, width, height)
+            ctx.fillRect(x, y, w, h)
         } else {
-            ctx.strokeRect(x, y, width, height)
+            ctx.strokeRect(x, y, w, h)
         }
         return this
     }
