@@ -404,6 +404,18 @@ class Kanvas(width: Double, height: Double) {
      */
     @JvmOverloads
     fun rectangle(width: Double = 10.0, height: Double = 10.0, fill: Boolean = false): Kanvas {
+        var x = x
+        var y = y
+        var w = width
+        var h = height
+        if (w < 0.0) {
+            x += w
+            w = -w
+        }
+        if (h < 0.0) {
+            y += h
+            h = -h
+        }
         if (fill) {
             ctx.fillRect(x, y, w, h)
         } else {
