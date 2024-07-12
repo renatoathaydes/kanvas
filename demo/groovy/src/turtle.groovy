@@ -25,4 +25,5 @@ withTurtle { t ->
     }
 }
 
-saveToImage(new File('flower.png'))
+// uncomment to save the drawing to a file
+//saveToImage(new File('flower.png'))
