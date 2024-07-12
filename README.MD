@@ -54,6 +54,43 @@ Result:
 
 ![Kotlin Basic Screenshot](demo/screenshots/basic.png)
 
+There are APIs for creating animations, reactive applications and a Logo-inspired API 🐢.
+
+## kanvas-groovy
+
+> Maven coordinates: `com.athaydes.kanvas:kanvas-groovy:<version>`
+
+A Groovy DSL based on `kanvas-core`.
+
+It provides a base class for Groovy scripts exposing a nice DSL for Kanvas.
+
+The biggest advantage with using Groovy scripts is that it supports hot reloading, which means
+when you make a change to the script and save the file, the changes are immediately reflected
+on the open window.
+
+The following code shows the Groovy version of the Kotlin sample shown above:
+
+```groovy
+import com.athaydes.kanvas.gr.KanvasScript
+import groovy.transform.BaseScript
+import javafx.scene.paint.Color
+
+// this is here only to make the IDE auto-completion better!
+@BaseScript KanvasScript baseScript
+
+title 'Groovy Kanvas Demo'
+width 300
+height 250
+
+background Color.BLACK
+fill Color.BLUE
+at 50, 30 circle 100, true
+```
+
+<details>
+
+<summary style="font-size: large">View Full Documentation</summary>
+
 ### Animations
 
 If you want to create animations rather than static images, you can use the `loop` function within your `draw`
@@ -145,30 +182,48 @@ class Example extends ObservableKanvasObject {
 }
 ```
 
-## kanvas-groovy
+### Logo Turtle API
 
-> Maven coordinates: `com.athaydes.kanvas:kanvas-groovy:<version>`
+[Logo](https://en.wikipedia.org/wiki/Logo_(programming_language) is a venerable education programming language
+designed for introducing programming via a drawing canvas.
 
-A Groovy DSL based on `kanvas-core`.
+In Logo, a "turtle" can be walked around in order to create drawings. Kanvas support an API that uses that abstraction,
+which can be very convenient in some scenarios.
 
-It provides a base class for Groovy scripts exposing a nice DSL for Kanvas:
+The following example shows the basics of how it works, in Groovy (Kotlin should look nearly identical):
 
 ```groovy
 import com.athaydes.kanvas.gr.KanvasScript
 import groovy.transform.BaseScript
 import javafx.scene.paint.Color
 
-// this is here only to make the IDE auto-completion better!
 @BaseScript KanvasScript baseScript
 
-title 'Groovy Kanvas Demo'
-width 300
-height 250
+background Color.WHITE
+title 'Logo Turtle'
+width 400
+height 200
 
-background Color.BLACK
-fill Color.BLUE
-at 50, 30 circle 100, true
+at 200, 100
+
+withTurtle { t ->
+    def polygon = { int sides ->
+        sides.times {
+            t.move(15).rotate(360 / sides)
+        }
+    }
+    def colors = [Color.BLACK, Color.RED, Color.BROWN, Color.BLUE, Color.GREEN, Color.MAGENTA]
+    colors.each { color ->
+        t.color(color)
+        polygon 10
+        t.rotate(60)
+    }
+}
 ```
+
+Result:
+
+![Logo Turtle Flower Drawing](demo/screenshots/flower.png)
 
 <details>
 
@@ -245,6 +300,8 @@ Groovy script and hot-reload it as it changes.
 All files under the same directory tree as the Groovy script are watched.
 
 For details on how to run Kanvas Groovy scripts, see the [Groovy Demo](demo/groovy/).
+
+</details>
 
 </details>
 
