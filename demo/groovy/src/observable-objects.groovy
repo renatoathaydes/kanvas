@@ -21,7 +21,7 @@ def circle1 = new DraggableCircle()
 def circle2 = new DraggableCircle(x: 150)
 
 // tell Kanvas to manage the observable objects
-manageKanvasObjects circle1, circle2
+manageKanvasObjects([circle1, circle2])
 
 @CompileStatic
 @Bindable

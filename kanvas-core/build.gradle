@@ -20,6 +20,10 @@ dependencies {
 sourceCompatibility = '21'
 targetCompatibility = '21'
 
+kotlin {
+    jvmToolchain(21)
+}
+
 jar {
     manifest {
         attributes 'Implementation-Version': version,
